@@ -7,7 +7,7 @@ This repository is maintained by the Functional Neuroimaging Laboratory, at the 
 
 The MIT License (MIT)
 
-Copyright (c) 2016 Raymundo Machado de Azevedo Neto
+Copyright (c) 2016 LIM44 - FMUSP
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of code and associated documentation files (the "Software"), to deal

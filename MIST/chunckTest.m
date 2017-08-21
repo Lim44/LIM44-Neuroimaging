@@ -30,6 +30,10 @@ try
     % Set up flag
     flag = 0;
     
+    %% Params
+    % Create your params structure similiar to the one that will be used in 
+    % the main script with the varibles you need to test this chunck of
+    % code
     
     while flag ==0
         

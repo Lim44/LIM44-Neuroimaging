@@ -14,7 +14,23 @@ function params = getExpParamsMIST(ptb,setup)
 % Last Update: --
 
 %% Stimulus Characteristics
+% Field of view where all elements will be drawn within
+FOV_deg = 15; % in degrees of visual angle
+FOV_rad = deg2rad(FOV_deg); % convert degrees to radians
+FOV_cm = tan(FOV_rad/2)*2*setup.scrn.distance; % convert radians to cm
+FOV_percentage = FOV_cm/setup.scrn.width; % percentage of the screen covered by the visual field.
 
+% Feedback bar
+feedback_deg = 12; % in degrees of visual angle
+
+% Time progress bar
+time_progress_deg = FOV; % in degrees of visual angle
+
+% Arithmetic task box
+arithmetic_box_deg = 10; % in degrees of visual angle
+
+% feedback box
+feedback_box_deg = 6; % in degrees of visual angle
 
 %% Experimental Design
 

@@ -34,9 +34,3 @@ params.timer = [round((ptb.scrn.resolution(1)/2))-timer_size_pix/2; round((ptb.s
 arithmetic_box_deg = 6; % in degrees of visual angle
 
 %% Experimental Design
-
-
-%% Put every thing in one struct (ptb and setup)
-params.ptb = ptb;
-params.setup = setup;
-

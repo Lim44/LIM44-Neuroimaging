@@ -21,16 +21,17 @@ FOV_cm = tan(FOV_rad/2)*2*setup.scrn.distance; % convert radians to cm
 FOV_percentage = FOV_cm/setup.scrn.width; % percentage of the screen covered by the visual field.
 
 % Feedback bar
-feedback_deg = 12; % in degrees of visual angle
+feedback_deg = 8; % in degrees of visual angle
 
-% Time progress bar
-time_progress_deg = FOV; % in degrees of visual angle
+% Timer circle
+timer_deg = 3; % timer size in degrees of visual angle
+timer_size_pix = visangle2stimsize(timer_deg,[],setup.scrn.distance,setup.scrn.width,ptb.scrn.resolution(1)); % timer size in pixels
+timer_center = 2.5; % Timer center distance from center of the screen in degrees
+timer_center = visangle2stimsize(timer_center,[],setup.scrn.distance,setup.scrn.width,ptb.scrn.resolution(1)); % pixels; 
+params.timer = [round((ptb.scrn.resolution(1)/2))-timer_size_pix/2; round((ptb.scrn.resolution(2)/2))-timer_size_pix/2 + timer_center; round((ptb.scrn.resolution(1)/2)) + timer_size_pix/2; round((ptb.scrn.resolution(2)/2)) + timer_size_pix/2 + timer_center];
 
-% Arithmetic task box
-arithmetic_box_deg = 10; % in degrees of visual angle
-
-% feedback box
-feedback_box_deg = 6; % in degrees of visual angle
+% Arithmetic and feedback task box
+arithmetic_box_deg = 6; % in degrees of visual angle
 
 %% Experimental Design
 

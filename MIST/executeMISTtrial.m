@@ -96,6 +96,10 @@ dial_vector = [1 2 3 4 5 6 7 8 9 10 1 2 3 4 5 6 7 8 9 10 1 2 3 4 5 6 7 8 9 10 1 
 % Initialize counter for time
 count_time = 1;
 
+% Initialize variable to make sure key is released before updating dial
+% ring position
+flag_key = 1;
+
 % Check timing
 loop_start = GetSecs;
 
@@ -104,7 +108,14 @@ while timer_samples > count_time
     
     % Check for any key presses
     [ keyIsDown, timeSecs, keyCode ] = KbCheck;
-    if keyIsDown 
+    
+    % If there is no key pressed, set flag_key to 0
+    if ~keyIsDown
+        flag_key = 0;
+    end
+    
+    % Only enters if keys are released
+    if keyIsDown && flag_key == 0
         if keyCode(params.ptb.device.left)
             prev_dial_position = dial_position;
             dial_position = dial_position - 1;
@@ -114,6 +125,7 @@ while timer_samples > count_time
         elseif keyCode(params.ptb.device.select)
         
         end
+        flag_key =1;
     end
     
     % Draw Wedge only when time_out is ~=100000
@@ -156,7 +168,3 @@ timer_time = loop_ends - loop_start
 response= [];
 time = [];
 log = [];
-
-
-        
-        

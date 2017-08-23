@@ -86,21 +86,47 @@ DrawFormattedText(params.ptb.w.id, [operation '=?'],'center','center',1,[],[],[]
 % Display image
 vbl=Screen('Flip',params.ptb.w.id,[],1);
 
+
+%% Set initial dial position
+dial_position = 21;
+prev_dial_position = 22;
+dial_vector = [1 2 3 4 5 6 7 8 9 10 1 2 3 4 5 6 7 8 9 10 1 2 3 4 5 6 7 8 9 10 1 2 3 4 5 6 7 8 9 10 1 2 3 4 5 6 7 8 9 10];
+
 %% Trial
 % Initialize counter for time
 count_time = 1;
-
 
 % Check timing
 loop_start = GetSecs;
 
 % Trial loop
 while timer_samples > count_time    
+    
+    % Check for any key presses
+    [ keyIsDown, timeSecs, keyCode ] = KbCheck;
+    if keyIsDown 
+        if keyCode(params.ptb.device.left)
+            prev_dial_position = dial_position;
+            dial_position = dial_position - 1;
+        elseif keyCode(params.ptb.device.right)
+            prev_dial_position = dial_position;
+            dial_position = dial_position + 1;
+        elseif keyCode(params.ptb.device.select)
         
+        end
+    end
+    
+    % Draw Wedge only when time_out is ~=100000
     if time_out ~= 100000
         % Draw Wedge
         Screen('FillArc',params.ptb.w.id,params.ptb.color.black,params.timer,0,round(wedge))
     end
+    
+    % Draw dial in red 
+    Screen('FrameOval',params.ptb.w.id,params.ptb.color.dark_red,params.dial_circles(:,dial_vector(dial_position)),params.lines)
+    
+    % Re-Draw previously select dial in black 
+    Screen('FrameOval',params.ptb.w.id,params.ptb.color.black,params.dial_circles(:,dial_vector(prev_dial_position)),params.lines)
         
     % Finish Drawing in this frame
     Screen('DrawingFinished', params.ptb.w.id,1);
@@ -130,3 +156,7 @@ timer_time = loop_ends - loop_start
 response= [];
 time = [];
 log = [];
+
+
+        
+        

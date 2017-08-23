@@ -31,7 +31,7 @@ function [response,time,log] = executeMISTtrial(operation,time_out,pctg_correct,
 %% Check input that will change later presentations
 % If time_out is empty, make it so big that time out will be never reached
 if isempty(time_out)
-    time_out = 10;
+    time_out = 100000;
 end
 %% Prepare variables that will help draw dynamic parts of the program
 
@@ -97,7 +97,7 @@ loop_start = GetSecs;
 % Trial loop
 while timer_samples > count_time    
         
-    if time_out ~= 10
+    if time_out ~= 100000
         % Draw Wedge
         Screen('FillArc',params.ptb.w.id,params.ptb.color.black,params.timer,0,round(wedge))
     end

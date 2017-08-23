@@ -45,8 +45,11 @@ ptb.scrn.resolution(2) = tmp.height;
 ptb.color.red = [230 10 10];
 ptb.color.black = 0;
 ptb.color.gray = [127 127 127];
-ptb.color.green = [];% Check for a nice green in RGB and put it here
-ptb.color.yellow = [];% Check for a nice yellow in RGB and put it here
+ptb.color.light_gray = [140 140 140];
+ptb.color.green = [0 255 0];
+ptb.color.yellow = [230 200 0];
+ptb.color.dark_red = [150 0 0];
+ptb.color.blue = [0 0 255];
 
 % Open Screen
 [ptb.w.id, ptb.w.rect] = Screen('OpenWindow', ptb.scrn.n,[127 127 127]);

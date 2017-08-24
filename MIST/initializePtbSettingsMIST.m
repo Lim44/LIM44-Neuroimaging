@@ -11,9 +11,10 @@ function ptb = initializePtbSettingsVSTM(setup)
 %         ptb.device - device been used to collect subject's response with
 %         fields .id and .key
 % Authors: Raymundo Machado de Azevedo Neto
+%          Paulo Rodrigo Bazan
 %
 % Date Created: 21 aug 2017
-% Last Update: --
+% Last Update: 24 aug 2017
 
 %% Setup Screen
 % Initialize Screen and UnifyKeyNames
@@ -30,7 +31,7 @@ Beeper();
 
 % Set the level of Verbosity for debugging (put 4 while programming and 0 when running experiment)
 Screen('Preference', 'VisualDebugLevel', 4);
-% Screen('Preference', 'SkipSyncTests', 1);
+Screen('Preference', 'SkipSyncTests', 1);
 % Check the number of screens available and select the highest number
 ptb.scrn.n = max(Screen('Screens'));
 
@@ -78,15 +79,18 @@ HideCursor;
 
 % Set Keyboard Parameters
 [tmp_device_number, ~, ~] = GetKeyboardIndices;
-ptb.device.key=KbName('space');
-ptb.device.trigger=KbName('s');
+ptb.device.left = KbName('1!');
+ptb.device.right = KbName('3#');
+ptb.device.select = KbName('2@');
+ptb.device.trigger = KbName('s');
+ptb.device.escapeKey = KbName('ESCAPE');
 
 % Current device being used to perform the experiment. Let commented
 % those which are not being used
 ptb.device.id=tmp_device_number(1);
 
 % Create and Start KbQueue for using it latter in the main script
-KbQueueCreate(ptb.device.id); % for subject's responses
-KbQueueStart();
+% KbQueueCreate(ptb.device.id); % for subject's responses
+% KbQueueStart();
 
 while KbCheck(); end % wait untill all keys are released

@@ -9,9 +9,10 @@ function params = getExpParamsMIST(ptb,setup)
 % parameters.
 
 % Authors: Raymundo Machado de Azevedo Neto
+%          Paulo Rodrigo Bazan
 %
 % Date Created: 21 aug 2017
-% Last Update: --
+% Last Update: 24 aug 2017
 
 %% Stimulus Characteristics
 % Text font
@@ -105,6 +106,17 @@ params.group_average = 0.78; % fake value for group average
 params.average_group_line = params.base_feedback_bar(:,1);
 params.average_group_line(1) = params.base_feedback_bar(1) + (params.base_feedback_bar(3) - params.base_feedback_bar(1))*params.group_average - params.lines/2;
 params.average_group_line(3) = params.base_feedback_bar(1) + (params.base_feedback_bar(3) - params.base_feedback_bar(1))*params.group_average + params.lines/2;
+
+% Fixation cross
+fix_length = 0.5; % degrees of visual angle
+fix_length = visangle2stimsize(fix_length,[],setup.scrn.distance,setup.scrn.width,ptb.scrn.resolution(1)); % pixels
+fix_width = 0.08; % degrees of visual angle
+fix_width = visangle2stimsize(fix_width,[],setup.scrn.distance,setup.scrn.width,ptb.scrn.resolution(1)); % pixels
+fixation_rect1 = [round(ptb.scrn.resolution(1)/2) - round(fix_width/2); (params.arithmetic_box(4)+params.arithmetic_box(2))/2 - fix_length/2;...
+    round(ptb.scrn.resolution(1)/2) + round(fix_width/2); (params.arithmetic_box(4)+params.arithmetic_box(2))/2 + fix_length/2];
+fixation_rect2 = [round(ptb.scrn.resolution(1)/2) - round(fix_length/2); (params.arithmetic_box(4)+params.arithmetic_box(2))/2 - fix_width/2;...
+    round(ptb.scrn.resolution(1)/2) + round(fix_length/2); (params.arithmetic_box(4)+params.arithmetic_box(2))/2 + fix_width/2];
+params.fixation_cross = [fixation_rect1 fixation_rect2];
 
 %% Experimental Design
 

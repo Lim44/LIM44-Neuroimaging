@@ -83,16 +83,21 @@ Screen('FillRect', params.ptb.w.id, params.ptb.color.light_gray, params.arithmet
 
 % Check whether its rest or task
 if isequal(operation,'+')
+    % flag to avoid keeping info on Screen buffer
+    flag_buffer = 0;
     
     % Draw fixation cross
     Screen('FillRect', params.ptb.w.id, params.ptb.color.black, params.fixation_cross);
 else
+    % flag to keep info on Screen buffer
+    flag_buffer = 1;
+    
     % Draw arithmetic operation
     DrawFormattedText(params.ptb.w.id, [operation '=?'],'center','center',1,[],[],[],[],[],params.arithmetic_box);
 end
 
 % Display image
-vbl=Screen('Flip',params.ptb.w.id,[],1);
+vbl=Screen('Flip',params.ptb.w.id,[],flag_buffer);
 
 
 %% Set initial dial position
@@ -157,7 +162,9 @@ while timer_samples > count_time
     Screen('DrawingFinished', params.ptb.w.id,1);
     
     % Display image
-    Screen('Flip',params.ptb.w.id,vbl+0.5*params.ptb.scrn.ifi,1);
+    if ~isequal(operation,'+')
+        Screen('Flip',params.ptb.w.id,vbl+0.5*params.ptb.scrn.ifi,flag_buffer);
+    end
     
     % Update wedge size
     wedge = wedge + wedge_rate;

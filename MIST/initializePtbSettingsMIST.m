@@ -51,6 +51,8 @@ ptb.color.green = [0 255 0];
 ptb.color.yellow = [230 200 0];
 ptb.color.dark_red = [150 0 0];
 ptb.color.blue = [0 0 255];
+ptb.color.dark_yellow = [200 180 0];
+ptb.color.dark_green = [0 150 0];
 
 % Open Screen
 [ptb.w.id, ptb.w.rect] = Screen('OpenWindow', ptb.scrn.n,[127 127 127]);

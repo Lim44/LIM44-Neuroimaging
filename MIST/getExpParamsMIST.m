@@ -119,7 +119,45 @@ fixation_rect2 = [round(ptb.scrn.resolution(1)/2) - round(fix_length/2); (params
 params.fixation_cross = [fixation_rect1 fixation_rect2];
 
 %% Experimental Design
+% If you want the experiment to be an event-related design, running one
+% type of condition per run, just write which condition should be run 
+% inside the cell array 'conditions'.
+% If you want the experiment to be an event-related design within long
+% blocks within the same run or a proper block design, just write which 
+% conditions should be run inside the cell array 'conditions' and then set 
+% the number of blocks per condition.
 
+% Conditions that will be run
+% conditions = {'experiment'};
+conditions = {'experiment','rest','control','experiment'};
+
+% Number of blocks per condition
+if length(conditions) > 1
+    number_of_blocks = 2;
+end
+
+% Block order
+if length(conditions) > 1
+    params.blocks = conditions;
+else
+    params.blocks = conditions;
+end
+
+% Blocks time (s)
+params.time_block = 5;
+
+% Blocks during the experiment
+if length(conditions) > 1
+    
+end
+
+% Initial percentage correct
+params.pctg_corect = 0.01;
+
+% Arithmetic operations list
+% still a work in progress. Just added the code bellow to run the
+% experiment with different operations.
+params.operations = {'1 + 2','3 * 3 - 2','45 - 35 - 4','3 -1','4 * 5 - 11','4 + 3','7 - 5','0 + 9','1 + 2','3 * 3 - 2','45 - 35 - 4','3 -1','4 * 5 - 11','4 + 3','7 - 5','0 + 9','1 + 2','3 * 3 - 2','45 - 35 - 4','3 -1','4 * 5 - 11','4 + 3','7 - 5','0 + 9','1 + 2','3 * 3 - 2','45 - 35 - 4','3 -1','4 * 5 - 11','4 + 3','7 - 5','0 + 9','1 + 2','3 * 3 - 2','45 - 35 - 4','3 -1','4 * 5 - 11','4 + 3','7 - 5','0 + 9','1 + 2','3 * 3 - 2','45 - 35 - 4','3 -1','4 * 5 - 11','4 + 3','7 - 5','0 + 9','1 + 2','3 * 3 - 2','45 - 35 - 4','3 -1','4 * 5 - 11','4 + 3','7 - 5','0 + 9','1 + 2','3 * 3 - 2','45 - 35 - 4','3 -1','4 * 5 - 11','4 + 3','7 - 5','0 + 9','1 + 2','3 * 3 - 2','45 - 35 - 4','3 -1','4 * 5 - 11','4 + 3','7 - 5','0 + 9'};
 
 %% Put every thing in one struct (ptb and setup)
 params.ptb = ptb;

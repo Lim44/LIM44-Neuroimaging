@@ -27,7 +27,7 @@ function [response,time,log] = executeMISTtrial(operation,time_out,pctg_correct,
 %          Paulo Rodrigo Bazan
 %
 % Data of creation: 22 aug 2017
-% Last update: 24 aug 2017
+% Last update: 25 aug 2017
 
 %% Check input that will change later presentations
 % If time_out is empty, make it so big that time out will be never reached
@@ -71,10 +71,15 @@ Screen('FillRect', params.ptb.w.id, params.feedback_bar_color, params.base_feedb
 if ~isempty(pctg_correct) 
     feedback_bar_subj = params.base_feedback_bar(:,1);
     feedback_bar_subj(3) = feedback_bar_subj(1) + (feedback_bar_subj(3) - feedback_bar_subj(1))*pctg_correct;
-    Screen('FillRect', params.ptb.w.id, [150 0 0 255],feedback_bar_subj);
-    
+    if pctg_correct > 0.75 
+        Screen('FillRect', params.ptb.w.id, params.ptb.color.dark_green,feedback_bar_subj);
+    elseif pctg_correct > 0.5 && pctg_correct <= 0.75    
+        Screen('FillRect', params.ptb.w.id, params.ptb.color.dark_yellow,feedback_bar_subj);
+    else
+        Screen('FillRect', params.ptb.w.id, params.ptb.color.dark_red,feedback_bar_subj);
+    end
     % Draw group average value    
-    Screen('FillRect', params.ptb.w.id, [0 0 255], params.average_group_line)
+    Screen('FillRect', params.ptb.w.id, params.ptb.color.blue, params.average_group_line)
 end
 
 % Draw arithmetic box
@@ -84,7 +89,7 @@ Screen('FillRect', params.ptb.w.id, params.ptb.color.light_gray, params.arithmet
 % Check whether its rest or task
 if isequal(operation,'+')
     % flag to avoid keeping info on Screen buffer
-    flag_buffer = 0;
+    flag_buffer = 1;
     
     % Draw fixation cross
     Screen('FillRect', params.ptb.w.id, params.ptb.color.black, params.fixation_cross);
@@ -93,7 +98,7 @@ else
     flag_buffer = 1;
     
     % Draw arithmetic operation
-    DrawFormattedText(params.ptb.w.id, [operation '=?'],'center','center',1,[],[],[],[],[],params.arithmetic_box);
+    DrawFormattedText(params.ptb.w.id, [operation ' = ?'],'center','center',1,[],[],[],[],[],params.arithmetic_box);
 end
 
 % Display image
@@ -162,9 +167,7 @@ while timer_samples > count_time
     Screen('DrawingFinished', params.ptb.w.id,1);
     
     % Display image
-    if ~isequal(operation,'+')
-        Screen('Flip',params.ptb.w.id,vbl+0.5*params.ptb.scrn.ifi,flag_buffer);
-    end
+    Screen('Flip',params.ptb.w.id,vbl+0.5*params.ptb.scrn.ifi,flag_buffer);
     
     % Update wedge size
     wedge = wedge + wedge_rate;
@@ -224,9 +227,9 @@ if ~isequal(operation,'+')
     
     % Draw feedback
     if ~exist('participants_response','var')
-        DrawFormattedText(params.ptb.w.id, 'Tempo','center','center',1,[],[],[],[],[],params.arithmetic_box);
+        DrawFormattedText(params.ptb.w.id, 'Tempo','center','center',params.ptb.color.dark_red,[],[],[],[],[],params.arithmetic_box);
     elseif response == 0
-        DrawFormattedText(params.ptb.w.id, 'Errado','center','center',1,[],[],[],[],[],params.arithmetic_box);
+        DrawFormattedText(params.ptb.w.id, 'Errado','center','center',params.ptb.color.dark_red,[],[],[],[],[],params.arithmetic_box);
     elseif response == 1
         DrawFormattedText(params.ptb.w.id, 'Certo','center','center',1,[],[],[],[],[],params.arithmetic_box);
     end
@@ -237,7 +240,11 @@ if ~isequal(operation,'+')
     % Wait params.feedback_time seconds to show feedback
     WaitSecs(0.5);
     
+else 
+    % Display image
+    Screen('Flip',params.ptb.w.id,vbl+0.5*params.ptb.scrn.ifi);
 end
+
 
 %% Organize all output
 time = [];

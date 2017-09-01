@@ -12,7 +12,7 @@ function params = getExpParamsMIST(ptb,setup)
 %          Paulo Rodrigo Bazan
 %
 % Date Created: 21 aug 2017
-% Last Update: 24 aug 2017
+% Last Update: 01 sep 2017
 
 %% Stimulus Characteristics
 % Text font
@@ -128,8 +128,14 @@ params.fixation_cross = [fixation_rect1 fixation_rect2];
 % the number of blocks per condition.
 
 % Conditions that will be run
-% conditions = {'experiment'};
-conditions = {'experiment','rest','control','experiment'};
+setup.stage = 'experimental';
+if isequal(setup.stage,'training')
+    conditions = {'control'};
+else isequal(setup.stage,'experimental')
+    conditions = {'experiment','control'};
+end
+
+% conditions = {'experiment','rest','control','experiment'};
 
 % Number of blocks per condition
 if length(conditions) > 1
@@ -137,14 +143,22 @@ if length(conditions) > 1
 end
 
 % Block order
-if length(conditions) > 1
+if length(conditions) > 1    
     params.blocks = conditions;
 else
     params.blocks = conditions;
 end
 
-% Blocks time (s)
-params.time_block = 5;
+% Blocks time (s). 
+% If you want an event-related design, just make the block
+% time as long as the length of the run.
+% If it is training phase, time_block should be set to Inf
+setup.stage = 'experimental';
+if isequal(setup.stage,'training')
+    params.time_block = Inf;
+else
+    params.time_block = 20;
+end
 
 % Blocks during the experiment
 if length(conditions) > 1
@@ -157,8 +171,28 @@ params.pctg_corect = 0.01;
 % Arithmetic operations list
 % still a work in progress. Just added the code bellow to run the
 % experiment with different operations.
-params.operations = {'1 + 2','3 * 3 - 2','45 - 35 - 4','3 -1','4 * 5 - 11','4 + 3','7 - 5','0 + 9','1 + 2','3 * 3 - 2','45 - 35 - 4','3 -1','4 * 5 - 11','4 + 3','7 - 5','0 + 9','1 + 2','3 * 3 - 2','45 - 35 - 4','3 -1','4 * 5 - 11','4 + 3','7 - 5','0 + 9','1 + 2','3 * 3 - 2','45 - 35 - 4','3 -1','4 * 5 - 11','4 + 3','7 - 5','0 + 9','1 + 2','3 * 3 - 2','45 - 35 - 4','3 -1','4 * 5 - 11','4 + 3','7 - 5','0 + 9','1 + 2','3 * 3 - 2','45 - 35 - 4','3 -1','4 * 5 - 11','4 + 3','7 - 5','0 + 9','1 + 2','3 * 3 - 2','45 - 35 - 4','3 -1','4 * 5 - 11','4 + 3','7 - 5','0 + 9','1 + 2','3 * 3 - 2','45 - 35 - 4','3 -1','4 * 5 - 11','4 + 3','7 - 5','0 + 9','1 + 2','3 * 3 - 2','45 - 35 - 4','3 -1','4 * 5 - 11','4 + 3','7 - 5','0 + 9'};
+params.operations = {'1 + 2','3 * 3 - 2','45 - 35 - 4','3 - 1','4 * 5 - 11','4 + 3','7 - 5','0 + 9','1 + 2','3 * 3 - 2','45 - 35 - 4','3 - 1','4 * 5 - 11','4 + 3','7 - 5','0 + 9','1 + 2','3 * 3 - 2','45 - 35 - 4','3 - 1','4 * 5 - 11','4 + 3','7 - 5','0 + 9','1 + 2','3 * 3 - 2','45 - 35 - 4','3 - 1','4 * 5 - 11','4 + 3','7 - 5','0 + 9','1 + 2','3 * 3 - 2','45 - 35 - 4','3 - 1','4 * 5 - 11','4 + 3','7 - 5','0 + 9','1 + 2','3 * 3 - 2','45 - 35 - 4','3 - 1','4 * 5 - 11','4 + 3','7 - 5','0 + 9','1 + 2','3 * 3 - 2','45 - 35 - 4','3 - 1','4 * 5 - 11','4 + 3','7 - 5','0 + 9','1 + 2','3 * 3 - 2','45 - 35 - 4','3 - 1','4 * 5 - 11','4 + 3','7 - 5','0 + 9','1 + 2','3 * 3 - 2','45 - 35 - 4','3 - 1','4 * 5 - 11','4 + 3','7 - 5','0 + 9','1 + 2','3 * 3 - 2','45 - 35 - 4','3 - 1','4 * 5 - 11','4 + 3','7 - 5','0 + 9','1 + 2','3 * 3 - 2','45 - 35 - 4','3 - 1','4 * 5 - 11','4 + 3','7 - 5','0 + 9','1 + 2','3 * 3 - 2','45 - 35 - 4','3 - 1','4 * 5 - 11','4 + 3','7 - 5','0 + 9','1 + 2','3 * 3 - 2','45 - 35 - 4','3 - 1','4 * 5 - 11','4 + 3','7 - 5','0 + 9','1 + 2','3 * 3 - 2','45 - 35 - 4','3 - 1','4 * 5 - 11','4 + 3','7 - 5','0 + 9','1 + 2','3 * 3 - 2','45 - 35 - 4','3 - 1','4 * 5 - 11','4 + 3','7 - 5','0 + 9','1 + 2','3 * 3 - 2','45 - 35 - 4','3 - 1','4 * 5 - 11','4 + 3','7 - 5','0 + 9','1 + 2','3 * 3 - 2','45 - 35 - 4','3 - 1','4 * 5 - 11','4 + 3','7 - 5','0 + 9','1 + 2','3 * 3 - 2','45 - 35 - 4','3 - 1','4 * 5 - 11','4 + 3','7 - 5','0 + 9','1 + 2','3 * 3 - 2','45 - 35 - 4','3 - 1','4 * 5 - 11','4 + 3','7 - 5','0 + 9','1 + 2','3 * 3 - 2','45 - 35 - 4','3 - 1','4 * 5 - 11','4 + 3','7 - 5','0 + 9','1 + 2','3 * 3 - 2','45 - 35 - 4','3 - 1','4 * 5 - 11','4 + 3','7 - 5','0 + 9','1 + 2','3 * 3 - 2','45 - 35 - 4','3 - 1','4 * 5 - 11','4 + 3','7 - 5','0 + 9','1 + 2','3 * 3 - 2','45 - 35 - 4','3 - 1','4 * 5 - 11','4 + 3','7 - 5','0 + 9','1 + 2','3 * 3 - 2','45 - 35 - 4','3 - 1','4 * 5 - 11','4 + 3','7 - 5','0 + 9','1 + 2','3 * 3 - 2','45 - 35 - 4','3 - 1','4 * 5 - 11','4 + 3','7 - 5','0 + 9','1 + 2','3 * 3 - 2','45 - 35 - 4','3 - 1','4 * 5 - 11','4 + 3','7 - 5','0 + 9','1 + 2','3 * 3 - 2','45 - 35 - 4','3 - 1','4 * 5 - 11','4 + 3','7 - 5','0 + 9','1 + 2','3 * 3 - 2','45 - 35 - 4','3 - 1','4 * 5 - 11','4 + 3','7 - 5','0 + 9','1 + 2','3 * 3 - 2','45 - 35 - 4','3 - 1','4 * 5 - 11','4 + 3','7 - 5','0 + 9','1 + 2','3 * 3 - 2','45 - 35 - 4','3 - 1','4 * 5 - 11','4 + 3','7 - 5','0 + 9','1 + 2','3 * 3 - 2','45 - 35 - 4','3 - 1','4 * 5 - 11','4 + 3','7 - 5','0 + 9','1 + 2','3 * 3 - 2','45 - 35 - 4','3 - 1','4 * 5 - 11','4 + 3','7 - 5','0 + 9','1 + 2','3 * 3 - 2','45 - 35 - 4','3 - 1','4 * 5 - 11','4 + 3','7 - 5','0 + 9','1 + 2','3 * 3 - 2','45 - 35 - 4','3 - 1','4 * 5 - 11','4 + 3','7 - 5','0 + 9','1 + 2','3 * 3 - 2','45 - 35 - 4','3 - 1','4 * 5 - 11','4 + 3','7 - 5','0 + 9','1 + 2','3 * 3 - 2','45 - 35 - 4','3 - 1','4 * 5 - 11','4 + 3','7 - 5','0 + 9','1 + 2','3 * 3 - 2','45 - 35 - 4','3 - 1','4 * 5 - 11','4 + 3','7 - 5','0 + 9','1 + 2','3 * 3 - 2','45 - 35 - 4','3 - 1','4 * 5 - 11','4 + 3','7 - 5','0 + 9','1 + 2','3 * 3 - 2','45 - 35 - 4','3 - 1','4 * 5 - 11','4 + 3','7 - 5','0 + 9','1 + 2','3 * 3 - 2','45 - 35 - 4','3 - 1','4 * 5 - 11','4 + 3','7 - 5','0 + 9','1 + 2','3 * 3 - 2','45 - 35 - 4','3 - 1','4 * 5 - 11','4 + 3','7 - 5','0 + 9','1 + 2','3 * 3 - 2','45 - 35 - 4','3 - 1','4 * 5 - 11','4 + 3','7 - 5','0 + 9','1 + 2','3 * 3 - 2','45 - 35 - 4','3 - 1','4 * 5 - 11','4 + 3','7 - 5','0 + 9','1 + 2','3 * 3 - 2','45 - 35 - 4','3 - 1','4 * 5 - 11','4 + 3','7 - 5','0 + 9','1 + 2','3 * 3 - 2','45 - 35 - 4','3 - 1','4 * 5 - 11','4 + 3','7 - 5','0 + 9','1 + 2','3 * 3 - 2','45 - 35 - 4','3 - 1','4 * 5 - 11','4 + 3','7 - 5','0 + 9','1 + 2','3 * 3 - 2','45 - 35 - 4','3 - 1','4 * 5 - 11','4 + 3','7 - 5','0 + 9'};
 
+% Inter-trial interval
+params.ITI = 1;
+
+% Estimate number of trials for experimental and control conditions for the
+% real experiment.
+if isequal(setup.stage,'experimental')
+    
+    % Load the estimated average time (s) to solve the arithmetic operation
+    % during training
+    average_time = 4; % Need to search the file and load it here
+    
+    % Reduce average time it took participants to solve operations by 10%
+    pre_post_loop_delay = 0.0501;
+    feedback_delay = 0.5;
+    params.initial_trial_length = average_time*0.90;
+    
+    % Estimate of trials per block     
+    trials_per_block = floor(params.time_block/(params.initial_trial_length + params.ITI + pre_post_loop_delay + feedback_delay));    
+    
+end
 %% Put every thing in one struct (ptb and setup)
 params.ptb = ptb;
 params.setup = setup;

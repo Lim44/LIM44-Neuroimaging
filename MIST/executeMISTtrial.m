@@ -1,4 +1,4 @@
-function [response,time,log] = executeMISTtrial(operation,time_out,pctg_correct,params) 
+function [response,time,log] = executeMISTtrial(operation,time_out,pctg_correct,params,prev_responses,count_operation) 
 
 % This function runs one trial of the MIST experiment
 % Input:
@@ -27,7 +27,10 @@ function [response,time,log] = executeMISTtrial(operation,time_out,pctg_correct,
 %          Paulo Rodrigo Bazan
 %
 % Data of creation: 22 aug 2017
-% Last update: 25 aug 2017
+% Last update: 01 sep 2017
+
+% Check timing
+function_start = GetSecs;
 
 %% Check input that will change later presentations
 % If time_out is empty, make it so big that time out will be never reached
@@ -120,6 +123,7 @@ flag_key = 1;
 
 % Check timing
 loop_start = GetSecs;
+pre_loop_timing = loop_start - function_start; %#ok<NASGU>
 
 % Trial loop
 while timer_samples > count_time    
@@ -225,6 +229,31 @@ if ~isequal(operation,'+')
     Screen('FrameRect', params.ptb.w.id, params.ptb.color.black, params.arithmetic_centeredBorder,params.lines);
     Screen('FillRect', params.ptb.w.id, params.ptb.color.light_gray, params.arithmetic_box);
     
+    % Update percentage of correct
+    if ~isempty(pctg_correct)
+        pctg_correct = sum([prev_responses(:,1); response]) / count_operation(1);
+        feedback_bar_subj = params.base_feedback_bar(:,1);
+        feedback_bar_subj(3) = feedback_bar_subj(1) + (feedback_bar_subj(3) - feedback_bar_subj(1))*pctg_correct;
+        
+        
+        % Draw back part of the feedback bar
+        Screen('FrameRect', params.ptb.w.id, params.ptb.color.black, params.centeredBorder,params.lines);
+        Screen('FillRect', params.ptb.w.id, [127 127 127 127;127 127 127 127;127 127 127 127;255 255 255 255], params.base_feedback_bar);
+        Screen('FillRect', params.ptb.w.id, params.feedback_bar_color, params.base_feedback_bar);
+        
+        % Draw feedback bar
+        if pctg_correct > 0.75
+            Screen('FillRect', params.ptb.w.id, params.ptb.color.dark_green,feedback_bar_subj);
+        elseif pctg_correct > 0.5 && pctg_correct <= 0.75
+            Screen('FillRect', params.ptb.w.id, params.ptb.color.dark_yellow,feedback_bar_subj);
+        else
+            Screen('FillRect', params.ptb.w.id, params.ptb.color.dark_red,feedback_bar_subj);
+        end
+        
+        % Draw group average value
+        Screen('FillRect', params.ptb.w.id, params.ptb.color.blue, params.average_group_line)
+    end
+    
     % Draw feedback
     if ~exist('participants_response','var')
         DrawFormattedText(params.ptb.w.id, 'Tempo','center','center',params.ptb.color.dark_red,[],[],[],[],[],params.arithmetic_box);
@@ -247,5 +276,15 @@ end
 
 
 %% Organize all output
-time = [];
-log = [];        
+% If time_out was reached, time = time_out. Otherwise time = time it took
+% for the participant to solve the arithmetic operation
+if ~exist('participants_response','var')
+    time = time_out;
+else
+    time = timer_time;
+end
+log = [];    
+
+% Check timing 
+post_loop_timing = GetSecs - loop_ends; %#ok<NASGU>
+trial_total_time = GetSecs - function_start;

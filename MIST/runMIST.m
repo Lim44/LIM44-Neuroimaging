@@ -4,7 +4,7 @@
 % Author: Raymundo Machado de Azevedo Neto
 %         Paulo Rodrigo Bazan
 % Date Created: 22 aug 2017
-% Last Update: 01 sep 2017
+% Last Update: 20 sep 2017
 
 clear all
 close all
@@ -79,7 +79,7 @@ try
             count_block(1) = count_block(1) + 1;
             
         elseif isequal(params.blocks{b},'control')
-            time_out = [];
+            time_out = trial_length; % Define it based on training later
             pctg_correct_flag = [];
             col_exp = 2; % this variable helps alocate values on correct column
             

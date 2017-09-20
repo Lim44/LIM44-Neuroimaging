@@ -27,23 +27,35 @@ function [response,time,log] = executeMISTtrial(operation,time_out,pctg_correct,
 %          Paulo Rodrigo Bazan
 %
 % Data of creation: 22 aug 2017
-% Last update: 01 sep 2017
+% Last update: 20 sep 2017
 
 % Check timing
 function_start = GetSecs;
 
-%% Check input that will change later presentations
-% If time_out is empty, make it so big that time out will be never reached
-if isempty(time_out)
-    time_out = 100000;
-end
 %% Prepare variables that will help draw dynamic parts of the program
 
-% Create timer motion parameters
+% Create timer motion parameters (experimental condition)
 timer_samples = round(time_out/(params.ptb.scrn.ifi)); % number of samples for the loop
 timer_samples = timer_samples + 1;
 wedge = 0; % Initial Wedge size starting from the vertical
 wedge_rate = 360/(timer_samples -2);
+
+% Create timer motion parameters (control condition). speed is the same as
+% timer in degrees/s
+start_angle_rate = wedge_rate; % in degrees
+start_angle = floor(rand(1)*360); % randomly choose from 0-360 degrees
+
+%% Check input that will change later presentations
+% If pctg_correct is empty, make time_out so big that time out will be
+% never reached (control condition)
+if isempty(pctg_correct) && ~isequal(operation,'+')
+%     old_time_out = time_out;
+    time_out = 100000;
+    
+    % New timer samples
+    timer_samples = round(time_out/(params.ptb.scrn.ifi)); % number of samples for the loop
+    timer_samples = timer_samples + 1;
+end
 
 %% Draw static elements of the program
 
@@ -155,8 +167,22 @@ while timer_samples > count_time
     
     % Draw Wedge only when time_out is ~=100000 or it isn't rest('+')
     if time_out ~= 100000 && ~isequal(operation,'+')
+        
         % Draw Wedge
         Screen('FillArc',params.ptb.w.id,params.ptb.color.black,params.timer,0,round(wedge))
+        
+    % Draw the "half pizza wedge" for the control condition    
+    elseif time_out == 100000 && ~isequal(operation,'+')
+        
+        % Draw background circle again
+        Screen('FillOval',params.ptb.w.id,params.ptb.color.gray,params.timer,params.lines)
+        
+        % Draw initial circle frame for the timer
+        Screen('FrameOval',params.ptb.w.id,params.ptb.color.black,params.timer,params.lines)
+        
+        % Draw Wedge
+        Screen('FillArc',params.ptb.w.id,params.ptb.color.black,params.timer,start_angle,round(180))
+        
     end
     
     % Draw dial in red if it isn' rest
@@ -173,8 +199,11 @@ while timer_samples > count_time
     % Display image
     Screen('Flip',params.ptb.w.id,vbl+0.5*params.ptb.scrn.ifi,flag_buffer);
     
-    % Update wedge size
+    % Update wedge size (experimental condition)
     wedge = wedge + wedge_rate;
+    
+    % Update starting angle (control condition)
+    start_angle = start_angle + start_angle_rate;
     
     % Update timer
     count_time = count_time + 1;

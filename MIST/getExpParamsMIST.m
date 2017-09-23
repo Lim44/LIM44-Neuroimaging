@@ -12,7 +12,17 @@ function params = getExpParamsMIST(ptb,setup)
 %          Paulo Rodrigo Bazan
 %
 % Date Created: 21 aug 2017
-% Last Update: 01 sep 2017
+% Last Update: 23 sep 2017
+
+%% Verify if palamedes have been installed and if folder is on the correct path
+palamedes_path_logical = exist('../palamedes1_8_2','dir');
+if ~palamedes_path_logical
+    disp('Palamedes toolbox should be in the same folder as MIST functions and scripts.\n')
+    disp('If you have not downloaded papalamedes yet, go to http://www.palamedestoolbox.org/download.html and download it!')
+    error('Palamedes toolbox should be in the same folder as MIST functions and scripts.')
+else
+   addpath('palamedes_1_8_2/Palamedes');
+end
 
 %% Stimulus Characteristics
 % Text font
@@ -24,10 +34,10 @@ line_width_pix = visangle2stimsize(line_width_deg,[],setup.scrn.distance,setup.s
 params.lines = line_width_pix;
 
 % Field of view where all elements will be drawn within
-FOV_deg = 15; % in degrees of visual angle
-FOV_rad = deg2rad(FOV_deg); % convert degrees to radians
-FOV_cm = tan(FOV_rad/2)*2*setup.scrn.distance; % convert radians to cm
-FOV_percentage = FOV_cm/setup.scrn.width; % percentage of the screen covered by the visual field.
+% FOV_deg = 15; % in degrees of visual angle
+% FOV_rad = deg2rad(FOV_deg); % convert degrees to radians
+% FOV_cm = tan(FOV_rad/2)*2*setup.scrn.distance; % convert radians to cm
+% FOV_percentage = FOV_cm/setup.scrn.width; % percentage of the screen covered by the visual field.
 
 % Timer circle
 timer_deg = 3; % timer size in degrees of visual angle
@@ -128,19 +138,18 @@ params.fixation_cross = [fixation_rect1 fixation_rect2];
 % the number of blocks per condition.
 
 % Conditions that will be run
-setup.stage = 'experimental';
 if isequal(setup.stage,'training')
     conditions = {'control'};
-else isequal(setup.stage,'experimental')
-    conditions = {'control'};
+else isequal(setup.stage,'experiment')
+    conditions = {'experiment'};
 end
 
 % conditions = {'experiment','rest','control','experiment'};
 
-% Number of blocks per condition
-if length(conditions) > 1
-    number_of_blocks = 2;
-end
+% % Number of blocks per condition
+% if length(conditions) > 1
+%     number_of_blocks = 2;
+% end
 
 % Block order
 if length(conditions) > 1    
@@ -153,11 +162,10 @@ end
 % If you want an event-related design, just make the block
 % time as long as the length of the run.
 % If it is training phase, time_block should be set to Inf
-setup.stage = 'experimental';
 if isequal(setup.stage,'training')
     params.time_block = Inf;
 else
-    params.time_block = 60;
+    params.time_block = 180;
 end
 
 % Blocks during the experiment
@@ -169,29 +177,50 @@ end
 params.pctg_corect = 0.01;
 
 % Arithmetic operations list
-% still a work in progress. Just added the code bellow to run the
-% experiment with different operations.
-params.operations = {'1 + 2','3 * 3 - 2','45 - 35 - 4','3 - 1','4 * 5 - 11','4 + 3','7 - 5','0 + 9','1 + 2','3 * 3 - 2','45 - 35 - 4','3 - 1','4 * 5 - 11','4 + 3','7 - 5','0 + 9','1 + 2','3 * 3 - 2','45 - 35 - 4','3 - 1','4 * 5 - 11','4 + 3','7 - 5','0 + 9','1 + 2','3 * 3 - 2','45 - 35 - 4','3 - 1','4 * 5 - 11','4 + 3','7 - 5','0 + 9','1 + 2','3 * 3 - 2','45 - 35 - 4','3 - 1','4 * 5 - 11','4 + 3','7 - 5','0 + 9','1 + 2','3 * 3 - 2','45 - 35 - 4','3 - 1','4 * 5 - 11','4 + 3','7 - 5','0 + 9','1 + 2','3 * 3 - 2','45 - 35 - 4','3 - 1','4 * 5 - 11','4 + 3','7 - 5','0 + 9','1 + 2','3 * 3 - 2','45 - 35 - 4','3 - 1','4 * 5 - 11','4 + 3','7 - 5','0 + 9','1 + 2','3 * 3 - 2','45 - 35 - 4','3 - 1','4 * 5 - 11','4 + 3','7 - 5','0 + 9','1 + 2','3 * 3 - 2','45 - 35 - 4','3 - 1','4 * 5 - 11','4 + 3','7 - 5','0 + 9','1 + 2','3 * 3 - 2','45 - 35 - 4','3 - 1','4 * 5 - 11','4 + 3','7 - 5','0 + 9','1 + 2','3 * 3 - 2','45 - 35 - 4','3 - 1','4 * 5 - 11','4 + 3','7 - 5','0 + 9','1 + 2','3 * 3 - 2','45 - 35 - 4','3 - 1','4 * 5 - 11','4 + 3','7 - 5','0 + 9','1 + 2','3 * 3 - 2','45 - 35 - 4','3 - 1','4 * 5 - 11','4 + 3','7 - 5','0 + 9','1 + 2','3 * 3 - 2','45 - 35 - 4','3 - 1','4 * 5 - 11','4 + 3','7 - 5','0 + 9','1 + 2','3 * 3 - 2','45 - 35 - 4','3 - 1','4 * 5 - 11','4 + 3','7 - 5','0 + 9','1 + 2','3 * 3 - 2','45 - 35 - 4','3 - 1','4 * 5 - 11','4 + 3','7 - 5','0 + 9','1 + 2','3 * 3 - 2','45 - 35 - 4','3 - 1','4 * 5 - 11','4 + 3','7 - 5','0 + 9','1 + 2','3 * 3 - 2','45 - 35 - 4','3 - 1','4 * 5 - 11','4 + 3','7 - 5','0 + 9','1 + 2','3 * 3 - 2','45 - 35 - 4','3 - 1','4 * 5 - 11','4 + 3','7 - 5','0 + 9','1 + 2','3 * 3 - 2','45 - 35 - 4','3 - 1','4 * 5 - 11','4 + 3','7 - 5','0 + 9','1 + 2','3 * 3 - 2','45 - 35 - 4','3 - 1','4 * 5 - 11','4 + 3','7 - 5','0 + 9','1 + 2','3 * 3 - 2','45 - 35 - 4','3 - 1','4 * 5 - 11','4 + 3','7 - 5','0 + 9','1 + 2','3 * 3 - 2','45 - 35 - 4','3 - 1','4 * 5 - 11','4 + 3','7 - 5','0 + 9','1 + 2','3 * 3 - 2','45 - 35 - 4','3 - 1','4 * 5 - 11','4 + 3','7 - 5','0 + 9','1 + 2','3 * 3 - 2','45 - 35 - 4','3 - 1','4 * 5 - 11','4 + 3','7 - 5','0 + 9','1 + 2','3 * 3 - 2','45 - 35 - 4','3 - 1','4 * 5 - 11','4 + 3','7 - 5','0 + 9','1 + 2','3 * 3 - 2','45 - 35 - 4','3 - 1','4 * 5 - 11','4 + 3','7 - 5','0 + 9','1 + 2','3 * 3 - 2','45 - 35 - 4','3 - 1','4 * 5 - 11','4 + 3','7 - 5','0 + 9','1 + 2','3 * 3 - 2','45 - 35 - 4','3 - 1','4 * 5 - 11','4 + 3','7 - 5','0 + 9','1 + 2','3 * 3 - 2','45 - 35 - 4','3 - 1','4 * 5 - 11','4 + 3','7 - 5','0 + 9','1 + 2','3 * 3 - 2','45 - 35 - 4','3 - 1','4 * 5 - 11','4 + 3','7 - 5','0 + 9','1 + 2','3 * 3 - 2','45 - 35 - 4','3 - 1','4 * 5 - 11','4 + 3','7 - 5','0 + 9','1 + 2','3 * 3 - 2','45 - 35 - 4','3 - 1','4 * 5 - 11','4 + 3','7 - 5','0 + 9','1 + 2','3 * 3 - 2','45 - 35 - 4','3 - 1','4 * 5 - 11','4 + 3','7 - 5','0 + 9','1 + 2','3 * 3 - 2','45 - 35 - 4','3 - 1','4 * 5 - 11','4 + 3','7 - 5','0 + 9','1 + 2','3 * 3 - 2','45 - 35 - 4','3 - 1','4 * 5 - 11','4 + 3','7 - 5','0 + 9','1 + 2','3 * 3 - 2','45 - 35 - 4','3 - 1','4 * 5 - 11','4 + 3','7 - 5','0 + 9','1 + 2','3 * 3 - 2','45 - 35 - 4','3 - 1','4 * 5 - 11','4 + 3','7 - 5','0 + 9','1 + 2','3 * 3 - 2','45 - 35 - 4','3 - 1','4 * 5 - 11','4 + 3','7 - 5','0 + 9','1 + 2','3 * 3 - 2','45 - 35 - 4','3 - 1','4 * 5 - 11','4 + 3','7 - 5','0 + 9','1 + 2','3 * 3 - 2','45 - 35 - 4','3 - 1','4 * 5 - 11','4 + 3','7 - 5','0 + 9','1 + 2','3 * 3 - 2','45 - 35 - 4','3 - 1','4 * 5 - 11','4 + 3','7 - 5','0 + 9','1 + 2','3 * 3 - 2','45 - 35 - 4','3 - 1','4 * 5 - 11','4 + 3','7 - 5','0 + 9','1 + 2','3 * 3 - 2','45 - 35 - 4','3 - 1','4 * 5 - 11','4 + 3','7 - 5','0 + 9','1 + 2','3 * 3 - 2','45 - 35 - 4','3 - 1','4 * 5 - 11','4 + 3','7 - 5','0 + 9','1 + 2','3 * 3 - 2','45 - 35 - 4','3 - 1','4 * 5 - 11','4 + 3','7 - 5','0 + 9'};
+% still a work in progress. Currently only has level 2. 
+fid = fopen('level2.txt');
+level2 = textscan(fid,'%s');
+fclose(fid);
+
+% Randomize operations order (still work in progress)
+op_order = randperm(length(level2{1}));
+for k = 1:length(op_order)
+   params.operations{k,1} = level2{1}{op_order(k)}; 
+end
 
 % Inter-trial interval
-params.ITI = 5;
+if isequal(setup.stage,'training')
+    params.ITI = 1;
+else isequal(setup.stage,'experiment')
+    params.ITI = 5;
+end
+
+% Percentage of correct responses that should be enforced for every
+% participant
+params.enforced_pctg = 0.4;
 
 % Estimate number of trials for experimental and control conditions for the
 % real experiment.
-if isequal(setup.stage,'experimental')
+if isequal(setup.stage,'experiment')
     
     % Load the estimated average time (s) to solve the arithmetic operation
     % during training
-    average_time = 4; % Need to search the file and load it here
+    path_participant_average = '';
+    average_time = load([path_participant_average 'average_time.txt']); % Need to search the file and load it here
     
     % Reduce average time it took participants to solve operations by 10%
-    pre_post_loop_delay = 0.0501;
-    feedback_delay = 0.5;
-    params.initial_trial_length = average_time*0.90;
+%     pre_post_loop_delay = 0.0501;
+%     feedback_delay = 0.5;
+%     params.initial_trial_length = average_time*0.90;
+    params.initial_trial_length = average_time;
     
     % Estimate of trials per block     
-    trials_per_block = floor(params.time_block/(params.initial_trial_length + params.ITI + pre_post_loop_delay + feedback_delay));    
+%     trials_per_block = floor(params.time_block/(params.initial_trial_length + params.ITI + pre_post_loop_delay + feedback_delay));    
+else
     
+    % This parameter should be set for the time it will take for the "half
+    % pizza timer" to run full circle on the training session
+    params.initial_trial_length = 5;
 end
 %% Put every thing in one struct (ptb and setup)
 params.ptb = ptb;

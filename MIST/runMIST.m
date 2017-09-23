@@ -4,7 +4,7 @@
 % Author: Raymundo Machado de Azevedo Neto
 %         Paulo Rodrigo Bazan
 % Date Created: 22 aug 2017
-% Last Update: 20 sep 2017
+% Last Update: 23 sep 2017
 
 clear all
 close all
@@ -26,11 +26,35 @@ try
     
     %% Initializing log file
     
+    %% Set up running fit procedure (QUEST) during experimental session
+    
+    if isequal(setup.stage,'experiment')
+        %Define prior
+        alphas = 0:.01:params.initial_trial_length + 10; % minimum and maximum values to prior distribution
+        prior = PAL_pdfNormal(alphas,params.initial_trial_length,1); %Gaussian
+        
+        %Termination rule
+        stopcriterion = 'trials';
+        stoprule = 10000; % It should be long enough to never end
+        
+        %Function to be fitted during procedure
+        PFfit = @PAL_CumulativeNormal; %Shape to be assumed. Testing cumulative normal
+        beta = 2; % Slope to be assumed
+        lambda  = 0.01; % Lapse rate to be assumed
+        gamma = 1/9; % Guessing rate
+        meanmode = 'mean'; % Use mean of posterior as placement rule
+        
+        %set up procedure
+        RF = PAL_AMRF_setupRF('priorAlphaRange', alphas, 'prior', prior,...
+            'stopcriterion',stopcriterion,'stoprule',stoprule,'beta',beta,...
+            'gamma',gamma,'lambda',lambda,'PF',PFfit,'meanmode',meanmode,'xMin',0);
+    end
+    
     
     %%  Instruction Screen
     Screen('TextSize', params.ptb.w.id, 36);
     Screen('TextFont',params.ptb.w.id, 'Arial');
-    Text='O experimento vai começar em instantes.\n Aguarde.';
+    Text='O experimento vai comeÃ§ar em instantes.\n Aguarde.';
     DrawFormattedText(params.ptb.w.id, Text, 'center', 'center',0);
     Screen('Flip',params.ptb.w.id);
     
@@ -39,7 +63,8 @@ try
     count_block = [0 0];
     count_operation = [1 1 1];  % counter to keep track of how many operations were performed in each condition
     flag_correct = 0;
-    trial_length = params.initial_trial_length;
+    trial_length = params.initial_trial_length; 
+    time_out = trial_length; % Start time_out using value from training session
     response = 0;
     
     %% Main Experiment
@@ -64,7 +89,7 @@ try
         
         % Select which condition to run on each block
         if isequal(params.blocks{b},'experiment')
-            time_out = trial_length; % Define it based on training later
+%             time_out = trial_length; % Define it based on training later
             col_exp = 1; % this variable helps alocate values on correct column
             
             % If it is at the first trial, pctg_correct_flag starts at
@@ -79,7 +104,7 @@ try
             count_block(1) = count_block(1) + 1;
             
         elseif isequal(params.blocks{b},'control')
-            time_out = trial_length; % Define it based on training later
+%             time_out = trial_length; % Define it based on training later
             pctg_correct_flag = [];
             col_exp = 2; % this variable helps alocate values on correct column
             
@@ -109,13 +134,28 @@ try
             
             % Check trial length and update ITI (increase or decrease)
             % accordingly
-            if time > trial_length
-                ITI = ITI - (time - trial_length);
+            if time > time_out
+                ITI = ITI - (time - time_out);
             elseif time < trial_length
-                ITI = ITI + (trial_length - time);
+                ITI = ITI + (time_out - time);
             end
             
-            % Update trial_length
+            % Keep time from each trial in a variable
+            time_memory(count_operation(col_exp)) = time;
+            
+            % Update time_out on experiment blocks
+            if  isequal(setup.stage,'experiment') && isequal(params.blocks{b},'experiment')
+                
+                % Find value of the Psychometric Function in which
+                % participants have 40% correct responses
+                stim_range = time_out - 2:0.01:time_out + 2; % Range of time_outs for the Psychometric curve
+                pcorrect = PAL_CumulativeNormal([RF.mean beta],stim_range); % Cumulative Normal Distribution of the percentage correct as a function of time_out
+                [~,location_stim_range] = min(abs(pcorrect - params.enforced_pctg)); % find location in the Psychometric Curtve where there is probability == params.enforce_pctg
+                amplitude = stim_range(location_stim_range); % Time_out to update the Running Fit Algorithm                
+                RF = PAL_AMRF_updateRF(RF, amplitude, response(count_operation(col_exp), col_exp));
+                time_out = amplitude; % Updated time_out
+                
+            end
             
             % Update logs
             
@@ -171,18 +211,46 @@ try
                 ITI_timing = GetSecs - before_ITI;
             end
             
-            % Press ESC to abort the experiment
-            %             if keyIsDown
-            %                 if keyCode(escapeKey)
-            %                     break;
-            %                 end
-            %             end
             abort=exp_quit;
             if abort==1
-                ShowCursor;
-                Priority(0);
-                Screen('CloseAll');
-                error('Experiment Aborted!')
+                                
+                % If running experiment, show Abort message
+                if isequal(setup.stage,'experiment')
+                    
+                    ShowCursor;
+                    Priority(0);
+                    Screen('CloseAll');
+                    
+                    error('Experiment Aborted!')
+                    
+                % If running training, show message that training is over and save output        
+                elseif isequal(setup.stage,'training')
+                    
+                    % Organizing ouput
+                    average_time = mean(time_memory(1:end-1)); % estimate average time excluding last trial
+                    
+                    % Save participants average time to calculate
+                    % operations on her/his own folder
+                    path_participant = '';
+                    save([path_participant 'average_time.txt'],'average_time','-ascii','-tabs')
+                    
+                    % Acknowledgment screen after training
+                    Screen('TextSize', params.ptb.w.id, 50);
+                    Screen('TextFont',params.ptb.w.id, 'Arial');
+                    
+                    Text = ['O treino acabou!'];
+                    DrawFormattedText(params.ptb.w.id, Text, 'center', 'center',0);
+                    Screen('Flip',params.ptb.w.id);
+                    WaitSecs(3);
+                                        
+                    disp('O treino acabou!')
+                    
+                    Priority(0);
+                    Screen('CloseAll');
+                    % Restores the mouse cursor.
+                    ShowCursor;
+                    return
+                end
             end
             
             % Update block timer
@@ -213,7 +281,7 @@ try
     Screen('TextSize', params.ptb.w.id, 50);
     Screen('TextFont',params.ptb.w.id, 'Arial');
     
-    Text = ['Esta parte do experimento acabou. \n\n' '\n\n Aguarde mais instruções.'];
+    Text = ['Esta parte do experimento acabou. \n\n' '\n\n Aguarde.'];
     DrawFormattedText(params.ptb.w.id, Text, 'center', 'center',0);
     Screen('Flip',params.ptb.w.id);
     WaitSecs(3);

@@ -4,7 +4,7 @@
 % Author: Raymundo Machado de Azevedo Neto
 %         Paulo Rodrigo Bazan
 % Date Created: 22 aug 2017
-% Last Update: 23 sep 2017
+% Last Update: 28 sep 2017
 
 clear all
 close all
@@ -76,7 +76,7 @@ try
     % Wait 1 second before starting
     WaitSecs(1);
     
-    % Start experimento with a fixation of 5 s
+    % Start experiment with a fixation of 5 s
     [~,~,~] = executeMISTtrial('+',5,[],params);
     
     % Loop through all blocks
@@ -298,6 +298,16 @@ try
     %     oldfolder=cd([]);
     
     %% Saving output
+    % Create output directory if it doesn't exist yet
+    % Directory for logfiles for later processing at FSL
+    if ~exist(['~/Desktop/MIST/1_Data/' setup.subj.id '/fMRI/logs'],'dir')
+        mkdir(['~/Desktop/MIST/1_Data/' setup.subj.id '/fMRI/logs'])
+    end
+    
+    % Directory for behavioral data
+    if ~exist(['~/Desktop/MIST/1_Data/' setup.subj.id '/Behavioral'],'dir')
+        mkdir(['~/Desktop/MIST/1_Data/' setup.subj.id '/Behavioral'])
+    end
     
     
     %     cd(oldfolder)

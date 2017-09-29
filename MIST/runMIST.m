@@ -4,7 +4,7 @@
 % Author: Raymundo Machado de Azevedo Neto
 %         Paulo Rodrigo Bazan
 % Date Created: 22 aug 2017
-% Last Update: 28 sep 2017
+% Last Update: 29 sep 2017
 
 clear all
 close all
@@ -29,32 +29,49 @@ try
     %% Set up running fit procedure (QUEST) during experimental session
     
     if isequal(setup.stage,'experiment')
-        %Define prior
-        alphas = 0:.01:params.initial_trial_length + 10; % minimum and maximum values to prior distribution
-        prior = PAL_pdfNormal(alphas,params.initial_trial_length,1); %Gaussian
+        % QUEST
+%         %Define prior
+%         alphas = 0:.01:params.initial_trial_length + 10; % minimum and maximum values to prior distribution
+%         prior = PAL_pdfNormal(alphas,params.initial_trial_length,1); %Gaussian
+%         
+%         %Termination rule
+%         stopcriterion = 'trials';
+%         stoprule = 10000; % It should be long enough to never end
+%         
+%         %Function to be fitted during procedure
+%         PFfit = @PAL_CumulativeNormal; %Shape to be assumed. Testing cumulative normal
+%         beta = 0.1; % Slope to be assumed
+%         lambda  = 0.01; % Lapse rate to be assumed
+%         gamma = 1/9; % Guessing rate
+%         meanmode = 'mean'; % Use mean of posterior as placement rule
+%         
+%         %set up procedure
+%         RF = PAL_AMRF_setupRF('priorAlphaRange', alphas, 'prior', prior,...
+%             'stopcriterion',stopcriterion,'stoprule',stoprule,'beta',beta,...
+%             'gamma',gamma,'lambda',lambda,'PF',PFfit,'meanmode',meanmode,'xMin',0);
         
-        %Termination rule
+        % Up/Down Staircase
+        
+        %Set up up/down procedure:
+        up = 1; % increase after 1 wrong
+        down = 1; % decrease after 1 consecutive right
+        StepSizeDown = 0.15;
+        StepSizeUp = 0.1;
         stopcriterion = 'trials';
-        stoprule = 10000; % It should be long enough to never end
+        stoprule = 10000;
+        startvalue = params.initial_trial_length; %intensity on first trial
         
-        %Function to be fitted during procedure
-        PFfit = @PAL_CumulativeNormal; %Shape to be assumed. Testing cumulative normal
-        beta = 2; % Slope to be assumed
-        lambda  = 0.01; % Lapse rate to be assumed
-        gamma = 1/9; % Guessing rate
-        meanmode = 'mean'; % Use mean of posterior as placement rule
-        
-        %set up procedure
-        RF = PAL_AMRF_setupRF('priorAlphaRange', alphas, 'prior', prior,...
-            'stopcriterion',stopcriterion,'stoprule',stoprule,'beta',beta,...
-            'gamma',gamma,'lambda',lambda,'PF',PFfit,'meanmode',meanmode,'xMin',0);
+        UD = PAL_AMUD_setupUD('up',up,'down',down);
+        UD = PAL_AMUD_setupUD(UD,'StepSizeDown',StepSizeDown,'StepSizeUp', ...
+            StepSizeUp,'stopcriterion',stopcriterion,'stoprule',stoprule, ...
+            'startvalue',startvalue);
     end
     
     
     %%  Instruction Screen
     Screen('TextSize', params.ptb.w.id, 36);
     Screen('TextFont',params.ptb.w.id, 'Arial');
-    Text='O experimento vai comeÃ§ar em instantes.\n Aguarde.';
+    Text='O experimento vai começar em instantes.\n Aguarde.';
     DrawFormattedText(params.ptb.w.id, Text, 'center', 'center',0);
     Screen('Flip',params.ptb.w.id);
     
@@ -130,7 +147,7 @@ try
             end
             
             % Execute one trial
-            [response(count_operation(col_exp), col_exp),time,log] = executeMISTtrial(operation,time_out,pctg_correct_flag,params,response,count_operation);
+            [response(count_operation(col_exp), col_exp),time,log] = executeMISTtrial(operation,time_out,pctg_correct_flag,params,response,count_operation); %#ok<SAGROW>
             
             % Check trial length and update ITI (increase or decrease)
             % accordingly
@@ -141,24 +158,32 @@ try
             end
             
             % Keep time from each trial in a variable
-            time_memory(count_operation(col_exp)) = time;
+            time_memory(count_operation(col_exp),col_exp) = time; %#ok<SAGROW>
             
             % Update time_out on experiment blocks
             if  isequal(setup.stage,'experiment') && isequal(params.blocks{b},'experiment')
                 
                 % Find value of the Psychometric Function in which
                 % participants have 40% correct responses
-                stim_range = time_out - 2:0.01:time_out + 2; % Range of time_outs for the Psychometric curve
-                pcorrect = PAL_CumulativeNormal([RF.mean beta],stim_range); % Cumulative Normal Distribution of the percentage correct as a function of time_out
-                [~,location_stim_range] = min(abs(pcorrect - params.enforced_pctg)); % find location in the Psychometric Curtve where there is probability == params.enforce_pctg
-                amplitude = stim_range(location_stim_range); % Time_out to update the Running Fit Algorithm                
-                RF = PAL_AMRF_updateRF(RF, amplitude, response(count_operation(col_exp), col_exp));
-                time_out = amplitude; % Updated time_out
+                
+                % Quest
+%                 stim_range = time_out - 2:0.01:time_out + 2; % Range of time_outs for the Psychometric curve
+%                 pcorrect = PAL_CumulativeNormal([RF.mean beta],stim_range); % Cumulative Normal Distribution of the percentage correct as a function of time_out
+%                 [~,location_stim_range] = min(abs(pcorrect - params.enforced_pctg)); % find location in the Psychometric Curtve where there is probability == params.enforce_pctg
+%                 amplitude = stim_range(location_stim_range); % Time_out to update the Running Fit Algorithm                
+%                 RF = PAL_AMRF_updateRF(RF, amplitude, response(count_operation(col_exp), col_exp));
+%                 time_out = amplitude; % Updated time_out
+%                 RF.xCurrent;
+                
+                % Up Down Staircase
+                UD = PAL_AMUD_updateUD(UD, response(count_operation(col_exp), col_exp));
+                time_out = UD.xCurrent;
                 
             end
             
             % Update logs
             
+            % Update button press output                        
             
             % Show to experimenter in which trial of which block
             
@@ -238,7 +263,7 @@ try
                     Screen('TextSize', params.ptb.w.id, 50);
                     Screen('TextFont',params.ptb.w.id, 'Arial');
                     
-                    Text = ['O treino acabou!'];
+                    Text = 'O treino acabou!';
                     DrawFormattedText(params.ptb.w.id, Text, 'center', 'center',0);
                     Screen('Flip',params.ptb.w.id);
                     WaitSecs(3);
@@ -308,6 +333,15 @@ try
     if ~exist(['~/Desktop/MIST/1_Data/' setup.subj.id '/Behavioral'],'dir')
         mkdir(['~/Desktop/MIST/1_Data/' setup.subj.id '/Behavioral'])
     end
+    
+    % Responses (0 - incorrect; 1 - correct)
+    Response_Out = {'Experiment','Control'};
+    for k = 1:length(response)
+       Response_Out{k+1,1} = response(k,1);
+       Response_Out{k+1,2} = response(k,2);
+    end
+        
+    
     
     
     %     cd(oldfolder)

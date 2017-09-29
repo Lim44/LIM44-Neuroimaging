@@ -139,7 +139,7 @@ flag_key = 1;
 
 % Check timing
 loop_start = GetSecs;
-pre_loop_timing = loop_start - function_start; %#ok<NASGU>
+pre_loop_timing = loop_start - function_start;
 
 % Trial loop
 while timer_samples > count_time    
@@ -162,6 +162,11 @@ while timer_samples > count_time
             current_dial_position = dial_vector(2,current_dial_position);    
         elseif keyCode(params.ptb.device.select) && ~isequal(operation,'+')
             participants_response = current_dial_position;
+            
+            % Keep track of all button presses and timing
+            count_button_press = count_button_press + 1;
+            button_press_timing = [button_press_timing;timeSecs];  %#ok<AGROW>
+            
             break;
         elseif keyCode(params.ptb.device.escapeKey)
             break;
@@ -328,5 +333,5 @@ log.trial_start = vbl;
 log.trial_duration = GetSecs - vbl;
 
 % Check timing 
-post_loop_timing = GetSecs - loop_ends; %#ok<NASGU>
-trial_total_time = GetSecs - function_start;
+post_loop_timing = GetSecs - loop_ends;
+trial_total_time = GetSecs - function_start; %#ok<*NASGU>

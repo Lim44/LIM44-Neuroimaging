@@ -27,7 +27,7 @@ function [response,time,log] = executeMISTtrial(operation,time_out,pctg_correct,
 %          Paulo Rodrigo Bazan
 %
 % Data of creation: 22 aug 2017
-% Last update: 20 sep 2017
+% Last update: 29 sep 2017
 
 % Check timing
 function_start = GetSecs;
@@ -129,6 +129,10 @@ dial_vector = [1 2 3 4 5 6 7 8 9 10;2 3 4 5 6 7 8 9 10 1; 10 1 2 3 4 5 6 7 8 9];
 % Initialize counter for time
 count_time = 1;
 
+% Intialize counter for number of button presses and timing
+count_button_press = 0;
+button_press_timing = [];
+
 % Initialize variable to make sure key is released before updating dial
 % ring position
 flag_key = 1;
@@ -160,9 +164,13 @@ while timer_samples > count_time
             participants_response = current_dial_position;
             break;
         elseif keyCode(params.ptb.device.escapeKey)
-                break;
+            break;
         end
         flag_key =1;
+        
+        % Keep track of all button presses and timing
+        count_button_press = count_button_press + 1; 
+        button_press_timing = [button_press_timing;timeSecs];  %#ok<AGROW>
     end
     
     % Draw Wedge only when time_out is ~=100000 or it isn't rest('+')
@@ -312,7 +320,12 @@ if ~exist('participants_response','var')
 else
     time = timer_time;
 end
-log = [];    
+
+% Log
+log.button_presses.number = count_button_press;
+log.button_presses.timing = button_press_timing;
+log.trial_start = vbl;
+log.trial_duration = GetSecs - vbl;
 
 % Check timing 
 post_loop_timing = GetSecs - loop_ends; %#ok<NASGU>

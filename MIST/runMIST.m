@@ -30,25 +30,25 @@ try
     
     if isequal(setup.stage,'experiment')
         % QUEST
-%         %Define prior
-%         alphas = 0:.01:params.initial_trial_length + 10; % minimum and maximum values to prior distribution
-%         prior = PAL_pdfNormal(alphas,params.initial_trial_length,1); %Gaussian
-%         
-%         %Termination rule
-%         stopcriterion = 'trials';
-%         stoprule = 10000; % It should be long enough to never end
-%         
-%         %Function to be fitted during procedure
-%         PFfit = @PAL_CumulativeNormal; %Shape to be assumed. Testing cumulative normal
-%         beta = 0.1; % Slope to be assumed
-%         lambda  = 0.01; % Lapse rate to be assumed
-%         gamma = 1/9; % Guessing rate
-%         meanmode = 'mean'; % Use mean of posterior as placement rule
-%         
-%         %set up procedure
-%         RF = PAL_AMRF_setupRF('priorAlphaRange', alphas, 'prior', prior,...
-%             'stopcriterion',stopcriterion,'stoprule',stoprule,'beta',beta,...
-%             'gamma',gamma,'lambda',lambda,'PF',PFfit,'meanmode',meanmode,'xMin',0);
+        %         %Define prior
+        %         alphas = 0:.01:params.initial_trial_length + 10; % minimum and maximum values to prior distribution
+        %         prior = PAL_pdfNormal(alphas,params.initial_trial_length,1); %Gaussian
+        %
+        %         %Termination rule
+        %         stopcriterion = 'trials';
+        %         stoprule = 10000; % It should be long enough to never end
+        %
+        %         %Function to be fitted during procedure
+        %         PFfit = @PAL_CumulativeNormal; %Shape to be assumed. Testing cumulative normal
+        %         beta = 0.1; % Slope to be assumed
+        %         lambda  = 0.01; % Lapse rate to be assumed
+        %         gamma = 1/9; % Guessing rate
+        %         meanmode = 'mean'; % Use mean of posterior as placement rule
+        %
+        %         %set up procedure
+        %         RF = PAL_AMRF_setupRF('priorAlphaRange', alphas, 'prior', prior,...
+        %             'stopcriterion',stopcriterion,'stoprule',stoprule,'beta',beta,...
+        %             'gamma',gamma,'lambda',lambda,'PF',PFfit,'meanmode',meanmode,'xMin',0);
         
         % Up/Down Staircase
         
@@ -77,10 +77,10 @@ try
     
     %% Initilization prior to experiment start
     trial_per_block = [0 0]; % count how many trials the participant carried out in each experimental and control blocks. Each line is a block
-    count_block = [0 0];
+    count_block = [0 0 0];
     count_operation = [1 1 1];  % counter to keep track of how many operations were performed in each condition
     flag_correct = 0;
-    trial_length = params.initial_trial_length; 
+    trial_length = params.initial_trial_length;
     time_out = trial_length; % Start time_out using value from training session
     response = 0;
     
@@ -106,7 +106,7 @@ try
         
         % Select which condition to run on each block
         if isequal(params.blocks{b},'experiment')
-%             time_out = trial_length; % Define it based on training later
+            %             time_out = trial_length; % Define it based on training later
             col_exp = 1; % this variable helps alocate values on correct column
             
             % If it is at the first trial, pctg_correct_flag starts at
@@ -121,7 +121,7 @@ try
             count_block(1) = count_block(1) + 1;
             
         elseif isequal(params.blocks{b},'control')
-%             time_out = trial_length; % Define it based on training later
+            %             time_out = trial_length; % Define it based on training later
             pctg_correct_flag = [];
             col_exp = 2; % this variable helps alocate values on correct column
             
@@ -131,6 +131,9 @@ try
             time_out = params.time_block;
             pctg_correct_flag = [];
             col_exp = 3; % this variable helps alocate values on correct column
+            
+            % Update block count
+            count_block(2) = count_block(3) + 1;
         end
         
         % Loop through all trials whithin a block
@@ -147,7 +150,7 @@ try
             end
             
             % Execute one trial
-            [response(count_operation(col_exp), col_exp),time,log] = executeMISTtrial(operation,time_out,pctg_correct_flag,params,response,count_operation); %#ok<SAGROW>
+            [response(count_operation(col_exp), col_exp),time,log] = executeMISTtrial(operation,time_out,pctg_correct_flag,params,response,count_operation);
             
             % Check trial length and update ITI (increase or decrease)
             % accordingly
@@ -158,7 +161,7 @@ try
             end
             
             % Keep time from each trial in a variable
-            time_memory(count_operation(col_exp),col_exp) = time; %#ok<SAGROW>
+            time_output(count_operation(col_exp),col_exp) = time;
             
             % Update time_out on experiment blocks
             if  isequal(setup.stage,'experiment') && isequal(params.blocks{b},'experiment')
@@ -167,13 +170,13 @@ try
                 % participants have 40% correct responses
                 
                 % Quest
-%                 stim_range = time_out - 2:0.01:time_out + 2; % Range of time_outs for the Psychometric curve
-%                 pcorrect = PAL_CumulativeNormal([RF.mean beta],stim_range); % Cumulative Normal Distribution of the percentage correct as a function of time_out
-%                 [~,location_stim_range] = min(abs(pcorrect - params.enforced_pctg)); % find location in the Psychometric Curtve where there is probability == params.enforce_pctg
-%                 amplitude = stim_range(location_stim_range); % Time_out to update the Running Fit Algorithm                
-%                 RF = PAL_AMRF_updateRF(RF, amplitude, response(count_operation(col_exp), col_exp));
-%                 time_out = amplitude; % Updated time_out
-%                 RF.xCurrent;
+                %                 stim_range = time_out - 2:0.01:time_out + 2; % Range of time_outs for the Psychometric curve
+                %                 pcorrect = PAL_CumulativeNormal([RF.mean beta],stim_range); % Cumulative Normal Distribution of the percentage correct as a function of time_out
+                %                 [~,location_stim_range] = min(abs(pcorrect - params.enforced_pctg)); % find location in the Psychometric Curtve where there is probability == params.enforce_pctg
+                %                 amplitude = stim_range(location_stim_range); % Time_out to update the Running Fit Algorithm
+                %                 RF = PAL_AMRF_updateRF(RF, amplitude, response(count_operation(col_exp), col_exp));
+                %                 time_out = amplitude; % Updated time_out
+                %                 RF.xCurrent;
                 
                 % Up Down Staircase
                 UD = PAL_AMUD_updateUD(UD, response(count_operation(col_exp), col_exp));
@@ -181,9 +184,46 @@ try
                 
             end
             
-            % Update logs
+            % Update logs (event related)
             
-            % Update button press output                        
+            if isequal(params.blocks{b},'experiment')
+                
+                log_event_experiment(count_operation(col_exp),1) = log.trial_start - start_time;
+                log_event_experiment(count_operation(col_exp),2) = log.trial_duration;
+                log_event_experiment(count_operation(col_exp),3) = 1;
+                
+            elseif isequal(params.blocks{b},'control')
+                
+                log_event_control(count_operation(col_exp),1) = log.trial_start - start_time;
+                log_event_control(count_operation(col_exp),2) = log.trial_duration;
+                log_event_control(count_operation(col_exp),3) = 1;
+                
+            end
+            
+            
+            % Update button press number output
+            button_press_number_output(count_operation(col_exp),col_exp) = log.button_presses.number;
+            
+            % Update button press timing output (in seconds after
+            % experiment started)
+            button_press_timing_output{count_operation(col_exp),col_exp} = log.button_presses.timing - start_time;
+            
+            % Update button press average frequency (Hz) output
+            button_press_frequency(count_operation(col_exp),col_exp) = 1/mean(diff(log.button_presses.timing - start_time));
+            
+            % Update Reaction Time (time it participant to press first
+            % button aftet trial start). If participant didn't press the
+            % button, rection time will be NaN
+            if ~isempty(log.button_presses.timing)
+                
+                reaction_time_output(count_operation(col_exp),col_exp) = log.button_presses.timing(1) - log.trial_start;
+                
+            else
+                
+                reaction_time_output(count_operation(col_exp),col_exp) = NaN;
+                
+            end
+            
             
             % Show to experimenter in which trial of which block
             
@@ -229,8 +269,9 @@ try
                 pctg_correct_flag = [];
             end
             
-            % Run the Inter-Trial Interval if it is not rest
-            if ~isequal(params.blocks{b},'rest')
+            % Run the Inter-Trial Interval if it is not rest and if
+            % block is not over
+            if ~isequal(params.blocks{b},'rest') && ~(params.time_block >= timer_block)
                 before_ITI = GetSecs;
                 [~,~,~] = executeMISTtrial('+',ITI,pctg_correct_flag,params);
                 ITI_timing = GetSecs - before_ITI;
@@ -238,7 +279,7 @@ try
             
             abort=exp_quit;
             if abort==1
-                                
+                
                 % If running experiment, show Abort message
                 if isequal(setup.stage,'experiment')
                     
@@ -248,16 +289,56 @@ try
                     
                     error('Experiment Aborted!')
                     
-                % If running training, show message that training is over and save output        
+                    % If running training, show message that training is over and save output
                 elseif isequal(setup.stage,'training')
                     
-                    % Organizing ouput
-                    average_time = mean(time_memory(1:end-1)); % estimate average time excluding last trial
+                    % Organizing ouput training
+                    average_time = mean(time_output(1:end-1)); % estimate average time excluding last trial
                     
-                    % Save participants average time to calculate
-                    % operations on her/his own folder
-                    path_participant = '';
-                    save([path_participant 'average_time.txt'],'average_time','-ascii','-tabs')
+                    % Responses (0 - incorrect; 1 - correct)
+                    Response_Out = {'Control'};
+                    for k = 1:length(response)
+                        Response_Out{k+1,1} = response(k,2);
+                    end
+                    
+                    % Button press number
+                    Button_press_number_Out = {'Control'};
+                    for k = 1:length(button_press_number_output)
+                        Button_press_number_Out{k+1,1} = button_press_number_output(k,2);
+                    end
+                    
+                    % Button press mean frequency (Hz)
+                    Button_press_frequency_Out = {'Control'};
+                    for k = 1:length(button_press_frequency)
+                        Button_press_frequency_Out{k+1,1} = button_press_frequency(k,2);
+                    end
+                    
+                    % Reaction Time (s)
+                    Reaction_Time_Out = {'Control'};
+                    for k = 1:length(reaction_time_output)
+                        Reaction_Time_Out{k+1,1} = reaction_time_output(k,2);
+                    end
+                    
+                    % Time (s)
+                    Time_Out = {'Control'};
+                    for k = 1:length(time_output)
+                        Time_Out{k+1,1} = time_output(k,2);
+                    end
+                    
+                    % Save output training
+                    if ~exist(['~/Desktop/MIST/1_Data/' setup.subj.id '/Behavioral/Training'],'dir')
+                        mkdir(['~/Desktop/MIST/1_Data/' setup.subj.id '/Behavioral/Training'])
+                    end                                        
+                    
+                    path_output_behavior = ['~/Desktop/MIST/1_Data/' setup.subj.id '/Behavioral/Training/'];
+                    
+                    save([path_output_behavior 'average_time.txt'],'average_time','-ascii','-tabs')
+                    
+                    cell2txtWrite(Response_Out,[path_output_behavior 'Responses.txt'])
+                    cell2txtWrite(Button_press_number_Out,[path_output_behavior 'Button_press_number.txt'])
+                    cell2txtWrite(Button_press_frequency_Out,[path_output_behavior 'Button_press_frequency.txt'])
+                    cell2txtWrite(Time_Out,[path_output_behavior 'Response_Time.txt'])
+                    cell2txtWrite(Reaction_Time_Out,[path_output_behavior 'Reaction_Time.txt'])                    
                     
                     % Acknowledgment screen after training
                     Screen('TextSize', params.ptb.w.id, 50);
@@ -267,7 +348,7 @@ try
                     DrawFormattedText(params.ptb.w.id, Text, 'center', 'center',0);
                     Screen('Flip',params.ptb.w.id);
                     WaitSecs(3);
-                                        
+                    
                     disp('O treino acabou!')
                     
                     Priority(0);
@@ -280,13 +361,35 @@ try
             
             % Update block timer
             timer_block = GetSecs - block_start;
-        end                
+        end
         
         % Check how long was the block
         block_length(b) = timer_block;
         
         % Check block timing
         check_block_time2 = GetSecs - check_block_time;
+        
+        % Update block log
+        if isequal(params.blocks{b},'experiment')
+            
+            log_block_experiment(count_block(1),1) = block_start - start_time; %#ok<*SAGROW>
+            log_block_experiment(count_block(1),2) = timer_block;
+            log_block_experiment(count_block(1),3) = 1;
+            
+        elseif isequal(params.blocks{b},'control')
+            
+            log_block_control(count_block(2),1) = block_start - start_time;
+            log_block_control(count_block(2),2) = timer_block;
+            log_block_control(count_block(2),3) = 1;
+            
+        elseif isequal(params.blocks{b},'rest')
+            
+            log_block_rest(count_block(3),1) = block_start - start_time;
+            log_block_rest(count_block(3),2) = timer_block;
+            log_block_rest(count_block(3),3) = 1;
+            
+        end
+        
     end
     
     % Press ESC to abort the experiment
@@ -317,31 +420,85 @@ try
     Screen('CloseAll');
     
     %% Creating folder to save participant's data and changing directory\
-    %     if ~exist([],'dir')
-    %         mkdir([])
-    %     end
-    %     oldfolder=cd([]);
-    
-    %% Saving output
     % Create output directory if it doesn't exist yet
-    % Directory for logfiles for later processing at FSL
+    % Directory for logfiles for later processing at FSL (if experiment)
     if ~exist(['~/Desktop/MIST/1_Data/' setup.subj.id '/fMRI/logs'],'dir')
         mkdir(['~/Desktop/MIST/1_Data/' setup.subj.id '/fMRI/logs'])
     end
     
+    path_output_fsl = ['~/Desktop/MIST/1_Data/' setup.subj.id '/fMRI/logs/'];
+    
     % Directory for behavioral data
-    if ~exist(['~/Desktop/MIST/1_Data/' setup.subj.id '/Behavioral'],'dir')
-        mkdir(['~/Desktop/MIST/1_Data/' setup.subj.id '/Behavioral'])
+    if ~exist(['~/Desktop/MIST/1_Data/' setup.subj.id '/Behavioral/Experiment'],'dir')
+        mkdir(['~/Desktop/MIST/1_Data/' setup.subj.id '/Behavioral/Experiment'])
     end
+    
+    path_output_behavior = ['~/Desktop/MIST/1_Data/' setup.subj.id '/Behavioral/Experiment/'];
+    
+    %% Organize output
     
     % Responses (0 - incorrect; 1 - correct)
     Response_Out = {'Experiment','Control'};
     for k = 1:length(response)
-       Response_Out{k+1,1} = response(k,1);
-       Response_Out{k+1,2} = response(k,2);
+        Response_Out{k+1,1} = response(k,1);
+        Response_Out{k+1,2} = response(k,2);
     end
-        
     
+    % Button press number
+    Button_press_number_Out = {'Experiment','Control'};
+    for k = 1:length(button_press_number_output)
+        Button_press_number_Out{k+1,1} = button_press_number_output(k,1);
+        Button_press_number_Out{k+1,2} = button_press_number_output(k,2);
+    end
+    
+    % Button press mean frequency (Hz)
+    Button_press_frequency_Out = {'Experiment','Control'};
+    for k = 1:length(button_press_frequency)
+        Button_press_frequency_Out{k+1,1} = button_press_frequency(k,1);
+        Button_press_frequency_Out{k+1,2} = button_press_frequency(k,2);
+    end
+    
+    % Reaction Time (s)
+    Reaction_Time_Out = {'Experiment','Control'};
+    for k = 1:length(reaction_time_output)
+        Reaction_Time_Out{k+1,1} = reaction_time_output(k,1);
+        Reaction_Time_Out{k+1,2} = reaction_time_output(k,2);
+    end
+    
+    % Time (s)
+    Time_Out = {'Experiment','Control'};
+    for k = 1:length(time_output)
+        Time_Out{k+1,1} = time_output(k,1);
+        Time_Out{k+1,2} = time_output(k,2);
+    end
+    
+    % Staircase values (s)
+    if isequal(setup.stage,'experiment')
+        Staircase_values = UD.x';
+    end
+    
+    % Block information
+    Trials_per_Block_Out = {'Experiment','Control'};
+    for k = 1:size(trial_per_block,1)
+        Trials_per_Block_Out{k+1,1} = trial_per_block(k,1);
+        Trials_per_Block_Out{k+1,2} = trial_per_block(k,2);
+    end    
+    
+    %% Save output
+    
+    
+    cell2txtWrite(Response_Out,[path_output_behavior 'Responses.txt'])
+    cell2txtWrite(Button_press_number_Out,[path_output_behavior 'Button_press_number.txt'])
+    cell2txtWrite(Button_press_frequency_Out,[path_output_behavior 'Button_press_frequency.txt'])
+    cell2txtWrite(Time_Out,[path_output_behavior 'Response_Time.txt'])
+    cell2txtWrite(Reaction_Time_Out,[path_output_behavior 'Reaction_Time.txt'])
+    cell2txtWrite(Trials_per_Block_Out,[path_output_behavior 'Trials_per_Block_Out.txt'])
+        
+    save([path_output_fsl 'log_event_experiment.txt'],'log_event_experiment','-ascii' ,'-tabs')
+    save([path_output_fsl 'log_event_control.txt'],'log_event_control','-ascii' ,'-tabs')
+    save([path_output_fsl 'log_block_experiment.txt'],'log_block_experiment','-ascii' ,'-tabs')
+    save([path_output_fsl 'log_block_control.txt'],'log_block_control','-ascii' ,'-tabs')
+    save([path_output_fsl 'log_block_rest.txt'],'log_block_rest','-ascii' ,'-tabs')
     
     
     %     cd(oldfolder)

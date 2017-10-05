@@ -27,7 +27,7 @@ function [response,time,log] = executeMISTtrial(operation,time_out,pctg_correct,
 %          Paulo Rodrigo Bazan
 %
 % Data of creation: 22 aug 2017
-% Last update: 29 sep 2017
+% Last update: 05 oct 2017
 
 % Check timing
 function_start = GetSecs;
@@ -145,7 +145,7 @@ pre_loop_timing = loop_start - function_start;
 while timer_samples > count_time    
     
     % Check for any key presses
-    [ keyIsDown, timeSecs, keyCode ] = KbCheck;
+    [ keyIsDown, timeSecs, keyCode ] = KbCheck(-1);
     
     % If there is no key pressed, set flag_key to 0
     if ~keyIsDown

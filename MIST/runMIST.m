@@ -4,7 +4,7 @@
 % Author: Raymundo Machado de Azevedo Neto
 %         Paulo Rodrigo Bazan
 % Date Created: 22 aug 2017
-% Last Update: 29 sep 2017
+% Last Update: 05 oct 2017
 
 clear all
 close all
@@ -71,7 +71,7 @@ try
     %%  Instruction Screen
     Screen('TextSize', params.ptb.w.id, 36);
     Screen('TextFont',params.ptb.w.id, 'Arial');
-    Text='O experimento vai começar em instantes.\n Aguarde.';
+    Text='O experimento vai comeÃ§ar em instantes.\n Aguarde.';
     DrawFormattedText(params.ptb.w.id, Text, 'center', 'center',0);
     Screen('Flip',params.ptb.w.id);
     
@@ -293,7 +293,7 @@ try
                 elseif isequal(setup.stage,'training')
                     
                     % Organizing ouput training
-                    average_time = mean(time_output(1:end-1)); % estimate average time excluding last trial
+                    average_time = mean(time_output(1:end-1,2)); % estimate average time excluding last trial
                     
                     % Responses (0 - incorrect; 1 - correct)
                     Response_Out = {'Control'};
@@ -498,7 +498,12 @@ try
     save([path_output_fsl 'log_event_control.txt'],'log_event_control','-ascii' ,'-tabs')
     save([path_output_fsl 'log_block_experiment.txt'],'log_block_experiment','-ascii' ,'-tabs')
     save([path_output_fsl 'log_block_control.txt'],'log_block_control','-ascii' ,'-tabs')
-    save([path_output_fsl 'log_block_rest.txt'],'log_block_rest','-ascii' ,'-tabs')
+    save([path_output_behavior 'Staircase_values.txt'],'Staircase_values','-ascii','-tabs')
+    save([path_output_behavior 'Staircaise.mat'],'UD')
+    
+    if exist('log_block_rest','var')
+        save([path_output_fsl 'log_block_rest.txt'],'log_block_rest','-ascii' ,'-tabs')
+    end
     
     
     %     cd(oldfolder)

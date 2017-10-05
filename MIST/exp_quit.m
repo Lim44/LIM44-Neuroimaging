@@ -1,7 +1,7 @@
 function abort=exp_quit
 
 escape=KbName('ESCAPE');
-[~,~,KeyCode]=KbCheck;
+[~,~,KeyCode]=KbCheck(-1);
 if KeyCode(escape)
     abort=1;
 else

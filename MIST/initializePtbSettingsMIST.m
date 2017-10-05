@@ -14,7 +14,7 @@ function ptb = initializePtbSettingsMIST(setup)
 %          Paulo Rodrigo Bazan
 %
 % Date Created: 21 aug 2017
-% Last Update: 01 sep 2017
+% Last Update: 05 oct 2017
 
 %% Setup Screen
 % Initialize Screen and UnifyKeyNames
@@ -81,15 +81,27 @@ HideCursor;
 
 % Set Keyboard Parameters
 [tmp_device_number, ~, ~] = GetKeyboardIndices;
-ptb.device.left = KbName('1!');
-ptb.device.right = KbName('3#');
+
+% This chunck of code reverts the numbers for a stupid button box
+if length(tmp_device_number) == 1
+    
+    ptb.device.left = KbName('1!');
+    ptb.device.right = KbName('3#');
+    
+else
+    
+    ptb.device.left = KbName('3#');
+    ptb.device.right = KbName('1!');
+    
+end
+
 ptb.device.select = KbName('2@');
 ptb.device.trigger = KbName('s');
 ptb.device.escapeKey = KbName('ESCAPE');
 
 % Current device being used to perform the experiment. Let commented
 % those which are not being used
-ptb.device.id=tmp_device_number(1);
+ptb.device.id = tmp_device_number(1);
 
 % Create and Start KbQueue for using it latter in the main script
 % KbQueueCreate(ptb.device.id); % for subject's responses

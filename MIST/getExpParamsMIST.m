@@ -12,7 +12,7 @@ function params = getExpParamsMIST(ptb,setup)
 %          Paulo Rodrigo Bazan
 %
 % Date Created: 21 aug 2017
-% Last Update: 23 sep 2017
+% Last Update: 05 oct 2017
 
 %% Verify if palamedes have been installed and if folder is on the correct path
 palamedes_path_logical = exist('palamedes1_8_2','dir');
@@ -141,7 +141,7 @@ params.fixation_cross = [fixation_rect1 fixation_rect2];
 if isequal(setup.stage,'training')
     conditions = {'control'};
 else isequal(setup.stage,'experiment')
-    conditions = {'experiment','control','experiment','control'};
+    conditions = {'experiment', 'control','experiment', 'control'};
 end
 
 % conditions = {'experiment','rest','control','experiment'};
@@ -197,7 +197,7 @@ end
 
 % Percentage of correct responses that should be enforced for every
 % participant
-params.enforced_pctg = 0.2;
+params.enforced_pctg = 0.4;
 
 % Estimate number of trials for experimental and control conditions for the
 % real experiment.
@@ -205,7 +205,7 @@ if isequal(setup.stage,'experiment')
     
     % Load the estimated average time (s) to solve the arithmetic operation
     % during training
-    path_participant_average = ['~/Desktop/MIST/1_Data/' setup.subj.id '/Behavioral/Training'];
+    path_participant_average = ['~/Desktop/MIST/1_data/' setup.subj.id '/Behavioral/Training/'];
     average_time = load([path_participant_average 'average_time.txt']); % Need to search the file and load it here
     
     % Reduce average time it took participants to solve operations by 10%

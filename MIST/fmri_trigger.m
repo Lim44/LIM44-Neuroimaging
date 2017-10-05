@@ -23,7 +23,7 @@ function [start_time,time_waited]=fmri_trigger(MRI_pulse_key,waitTR,deviceNumber
 % Main program
 time1=GetSecs;
 while waitTR~=0
-    [~, keyCode]=KbPressWait(deviceNumber);
+    [~, keyCode]=KbPressWait(-1);
     if keyCode(MRI_pulse_key)
         waitTR=waitTR-1;
     end

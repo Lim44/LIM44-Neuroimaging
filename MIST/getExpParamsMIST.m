@@ -15,13 +15,13 @@ function params = getExpParamsMIST(ptb,setup)
 % Last Update: 23 sep 2017
 
 %% Verify if palamedes have been installed and if folder is on the correct path
-palamedes_path_logical = exist('../palamedes1_8_2','dir');
+palamedes_path_logical = exist('palamedes1_8_2','dir');
 if ~palamedes_path_logical
     disp('Palamedes toolbox should be in the same folder as MIST functions and scripts.\n')
     disp('If you have not downloaded papalamedes yet, go to http://www.palamedestoolbox.org/download.html and download it!')
     error('Palamedes toolbox should be in the same folder as MIST functions and scripts.')
 else
-   addpath('palamedes_1_8_2/Palamedes');
+   addpath('palamedes1_8_2/Palamedes');
 end
 
 %% Stimulus Characteristics

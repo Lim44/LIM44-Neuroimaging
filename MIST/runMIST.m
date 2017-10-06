@@ -4,7 +4,7 @@
 % Author: Raymundo Machado de Azevedo Neto
 %         Paulo Rodrigo Bazan
 % Date Created: 22 aug 2017
-% Last Update: 05 oct 2017
+% Last Update: 06 oct 2017
 
 clear all
 close all
@@ -267,7 +267,7 @@ try
                 count_operation(2) = count_operation(2) + 1;
                 
                 pctg_correct_flag = [];
-            end
+            end            
             
             % Run the Inter-Trial Interval if it is not rest and if
             % block is not over
@@ -276,8 +276,30 @@ try
                 [~,~,~] = executeMISTtrial('+',ITI,pctg_correct_flag,params);
                 ITI_timing = GetSecs - before_ITI;
             end
-            
+                        
+            % Abort experiment
             abort=exp_quit;
+            
+            % Check how many trials have been carried out during training
+            % and calculate % correct to stop training
+            if isequal(setup.stage,'training')
+               
+                if count_operation(2) > params.min_trials_training
+                
+                    % Calculate percentage correct on the last 15 trials
+                    pctg_correct_training = sum(response(:,2))/length(response(:,2));
+                    
+                    % If percentage correct is >= termination criterium,
+                    % abort = 1
+                    if pctg_correct_training >= params.training_termination
+                       
+                        abort = 1;
+                        
+                    end
+                    
+                end
+            end
+            
             if abort==1
                 
                 % If running experiment, show Abort message
@@ -293,7 +315,7 @@ try
                 elseif isequal(setup.stage,'training')
                     
                     % Organizing ouput training
-                    average_time = mean(time_output(1:end-1,2)); % estimate average time excluding last trial
+                    average_time = mean(time_output(end-15:end-1,2)); % estimate average time excluding last trial, but only for the previous 15 trials
                     
                     % Responses (0 - incorrect; 1 - correct)
                     Response_Out = {'Control'};

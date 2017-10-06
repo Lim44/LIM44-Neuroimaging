@@ -315,7 +315,11 @@ try
                 elseif isequal(setup.stage,'training')
                     
                     % Organizing ouput training
-                    average_time = mean(time_output(end-15:end-1,2)); % estimate average time excluding last trial, but only for the previous 15 trials
+                    if length(time_output) >= 15
+                        average_time = mean(time_output(end-15:end-1,2)); % estimate average time excluding last trial, but only for the previous 15 trials
+                    else
+                        average_time = mean(time_output(1:end-1,2)); % estimate average time excluding last trial, but only for the previous 15 trials
+                    end
                     
                     % Responses (0 - incorrect; 1 - correct)
                     Response_Out = {'Control'};

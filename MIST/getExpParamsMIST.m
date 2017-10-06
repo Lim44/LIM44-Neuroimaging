@@ -12,7 +12,7 @@ function params = getExpParamsMIST(ptb,setup)
 %          Paulo Rodrigo Bazan
 %
 % Date Created: 21 aug 2017
-% Last Update: 05 oct 2017
+% Last Update: 06 oct 2017
 
 %% Verify if palamedes have been installed and if folder is on the correct path
 palamedes_path_logical = exist('palamedes1_8_2','dir');
@@ -222,6 +222,12 @@ else
     % pizza timer" to run full circle on the training session
     params.initial_trial_length = 5;
 end
+
+% Minimum number of trials to be performed during training
+params.min_trials_training = 20;
+
+% Termination criterium for training (percentage correct trials)
+params.training_termination = 0.85;
 %% Put every thing in one struct (ptb and setup)
 params.ptb = ptb;
 params.setup = setup;

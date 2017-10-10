@@ -133,7 +133,7 @@ try
             col_exp = 3; % this variable helps alocate values on correct column
             
             % Update block count
-            count_block(2) = count_block(3) + 1;
+            count_block(3) = count_block(3) + 1;
         end
         
         % Loop through all trials whithin a block

@@ -1,5 +1,5 @@
-% This script runs the first version of the implicit short-term memory
-% experiment (behavioral experiment).
+% This script runs a modified version of Montreal Imaging Stress Test
+% (MIST).
 
 % Author: Raymundo Machado de Azevedo Neto
 %         Paulo Rodrigo Bazan

@@ -4,7 +4,7 @@
 % Author: Raymundo Machado de Azevedo Neto
 %         Paulo Rodrigo Bazan
 % Date Created: 22 aug 2017
-% Last Update: 06 oct 2017
+% Last Update: 19 oct 2017
 
 clear all
 close all
@@ -14,17 +14,13 @@ try
     %% Initializing experimental parameters
     
     % Initialize Setup
-    setup = getExpSetupMIST(0);
+    setup = getExpSetupMIST(0);   
     
     % Initialize Psychtoolbox Settings
-    ptb = initializePtbSettingsMIST(setup);
+    ptb = initializePtbSettingsMIST(setup);    
     
     % Get Experimental Parameters
-    params = getExpParamsMIST(ptb,setup);
-    
-    %% Outputs
-    
-    %% Initializing log file
+    params = getExpParamsMIST(ptb,setup);                       
     
     %% Set up running fit procedure (QUEST) during experimental session
     
@@ -94,7 +90,7 @@ try
     WaitSecs(1);
     
     % Start experiment with a fixation of 5 s
-    [~,~,~] = executeMISTtrial('+',5,[],params);
+    [~,~,~] = executeMISTtrial('+',5,[],params);    
     
     % Loop through all blocks
     check_block_time = GetSecs;
@@ -120,6 +116,9 @@ try
             % Update block count
             count_block(1) = count_block(1) + 1;
             
+            % Allocate time for block
+            time_block = params.time_block.experiment;
+            
         elseif isequal(params.blocks{b},'control')
             %             time_out = trial_length; % Define it based on training later
             pctg_correct_flag = [];
@@ -127,17 +126,24 @@ try
             
             % Update block count
             count_block(2) = count_block(2) + 1;
+            
+            % Allocate time for block
+            time_block = params.time_block.control;
+            
         else
-            time_out = params.time_block;
+            time_out = params.time_block.rest;
             pctg_correct_flag = [];
             col_exp = 3; % this variable helps alocate values on correct column
             
             % Update block count
             count_block(3) = count_block(3) + 1;
+            
+            % Allocate time for block
+            time_block = params.time_block.rest;
         end
         
         % Loop through all trials whithin a block
-        while params.time_block >= timer_block % Should think of better names for these two variables
+        while time_block >= timer_block % Should think of better names for these two variables
             
             % Restart ITI
             ITI = params.ITI;
@@ -145,7 +151,7 @@ try
             % Select operation from list
             if ~isequal(params.blocks{b},'rest')
                 operation = params.operations{sum(count_operation)-2};
-            else isequal(params.blocks{b},'rest')
+            elseif isequal(params.blocks{b},'rest')
                 operation = '+';
             end
             
@@ -267,17 +273,16 @@ try
                 count_operation(2) = count_operation(2) + 1;
                 
                 pctg_correct_flag = [];
-            end            
+            end                        
             
             % Run the Inter-Trial Interval if it is not rest and if
             % block is not over
-            if ~isequal(params.blocks{b},'rest') && ~(params.time_block >= timer_block)
+            if ~isequal(params.blocks{b},'rest') && ~(time_block >= timer_block)
                 before_ITI = GetSecs;
                 [~,~,~] = executeMISTtrial('+',ITI,pctg_correct_flag,params);
                 ITI_timing = GetSecs - before_ITI;
-            end
-                        
-            % Abort experiment
+            end                        
+            
             abort=exp_quit;
             
             % Check how many trials have been carried out during training
@@ -315,11 +320,7 @@ try
                 elseif isequal(setup.stage,'training')
                     
                     % Organizing ouput training
-                    if length(time_output) >= 15
-                        average_time = mean(time_output(end-15:end-1,2)); % estimate average time excluding last trial, but only for the previous 15 trials
-                    else
-                        average_time = mean(time_output(1:end-1,2)); % estimate average time excluding last trial, but only for the previous 15 trials
-                    end
+                    average_time = mean(time_output(end-15:end-1,2)); % estimate average time excluding last trial
                     
                     % Responses (0 - incorrect; 1 - correct)
                     Response_Out = {'Control'};

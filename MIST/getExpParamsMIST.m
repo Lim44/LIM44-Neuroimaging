@@ -12,7 +12,7 @@ function params = getExpParamsMIST(ptb,setup)
 %          Paulo Rodrigo Bazan
 %
 % Date Created: 21 aug 2017
-% Last Update: 06 oct 2017
+% Last Update: 19 oct 2017
 
 %% Verify if palamedes have been installed and if folder is on the correct path
 palamedes_path_logical = exist('palamedes1_8_2','dir');
@@ -140,8 +140,10 @@ params.fixation_cross = [fixation_rect1 fixation_rect2];
 % Conditions that will be run
 if isequal(setup.stage,'training')
     conditions = {'control'};
-else isequal(setup.stage,'experiment')
-    conditions = {'experiment', 'control','experiment', 'control'};
+    
+elseif isequal(setup.stage,'experiment')
+    conditions = {'experiment','rest', 'control','rest','experiment', 'control'};
+    
 end
 
 % conditions = {'experiment','rest','control','experiment'};
@@ -160,12 +162,15 @@ end
 
 % Blocks time (s). 
 % If you want an event-related design, just make the block
-% time as long as the length of the run.
+% time as long as the length of the run. You can also set the time for
+% block separately for each experimental condition
 % If it is training phase, time_block should be set to Inf
 if isequal(setup.stage,'training')
     params.time_block = Inf;
 else
-    params.time_block = 60;
+    params.time_block.rest = 10;
+    params.time_block.control = 20;
+    params.time_block.experiment = 20;
 end
 
 % Blocks during the experiment
@@ -191,7 +196,7 @@ end
 % Inter-trial interval
 if isequal(setup.stage,'training')
     params.ITI = 1;
-else isequal(setup.stage,'experiment')
+elseif isequal(setup.stage,'experiment')
     params.ITI = 5;
 end
 
@@ -224,7 +229,7 @@ else
 end
 
 % Minimum number of trials to be performed during training
-params.min_trials_training = 20;
+params.min_trials_training = 30;
 
 % Termination criterium for training (percentage correct trials)
 params.training_termination = 0.85;

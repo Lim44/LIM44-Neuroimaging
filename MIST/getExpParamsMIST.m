@@ -12,7 +12,7 @@ function params = getExpParamsMIST(ptb,setup)
 %          Paulo Rodrigo Bazan
 %
 % Date Created: 21 aug 2017
-% Last Update: 19 oct 2017
+% Last Update: 20 oct 2017
 
 %% Verify if palamedes have been installed and if folder is on the correct path
 palamedes_path_logical = exist('palamedes1_8_2','dir');
@@ -229,7 +229,7 @@ else
 end
 
 % Minimum number of trials to be performed during training
-params.min_trials_training = 30;
+params.min_trials_training = 60;
 
 % Termination criterium for training (percentage correct trials)
 params.training_termination = 0.85;

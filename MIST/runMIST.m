@@ -4,7 +4,7 @@
 % Author: Raymundo Machado de Azevedo Neto
 %         Paulo Rodrigo Bazan
 % Date Created: 22 aug 2017
-% Last Update: 19 oct 2017
+% Last Update: 20 oct 2017
 
 clear all
 close all
@@ -119,8 +119,8 @@ try
             % Allocate time for block
             time_block = params.time_block.experiment;
             
-        elseif isequal(params.blocks{b},'control')
-            %             time_out = trial_length; % Define it based on training later
+        elseif isequal(params.blocks{b},'control')            
+            
             pctg_correct_flag = [];
             col_exp = 2; % this variable helps alocate values on correct column
             
@@ -128,7 +128,13 @@ try
             count_block(2) = count_block(2) + 1;
             
             % Allocate time for block
-            time_block = params.time_block.control;
+            if isequal(params.setup.stage,'training')
+                
+                time_block = params.time_block;
+            else
+                time_block = params.time_block.control;
+            end
+            
             
         else
             time_out = params.time_block.rest;
@@ -170,7 +176,8 @@ try
             time_output(count_operation(col_exp),col_exp) = time;
             
             % Update time_out on experiment blocks
-            if  isequal(setup.stage,'experiment') && isequal(params.blocks{b},'experiment')
+            % Up Down Staircase
+            if  isequal(setup.stage,'experiment')
                 
                 % Find value of the Psychometric Function in which
                 % participants have 40% correct responses
@@ -185,8 +192,12 @@ try
                 %                 RF.xCurrent;
                 
                 % Up Down Staircase
-                UD = PAL_AMUD_updateUD(UD, response(count_operation(col_exp), col_exp));
-                time_out = UD.xCurrent;
+                % Update time_out on experiment blocks
+                if isequal(params.blocks{b},'experiment')
+                    UD = PAL_AMUD_updateUD(UD, response(count_operation(col_exp), col_exp));                
+                elseif isequal(params.blocks{b},'control') || isequal(params.blocks{b},'rest')
+                    time_out = UD.xCurrent;                                
+                end
                 
             end
             

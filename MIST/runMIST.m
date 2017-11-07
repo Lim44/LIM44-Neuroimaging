@@ -437,7 +437,7 @@ try
     % Syncronize last volume acquisition with program
     end_flag=0;
     while end_flag == 0;
-        [~, ~,~,end_flag]=KbWait2(params.ptb.device.trigger,0,params.TR+0.005);
+        [~, ~,~,end_flag]=KbWait2(params.ptb.device.id,0,params.TR+0.005);
     end
     
     % Give information about experiment time

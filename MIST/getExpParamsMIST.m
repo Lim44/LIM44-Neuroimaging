@@ -12,7 +12,7 @@ function params = getExpParamsMIST(ptb,setup)
 %          Paulo Rodrigo Bazan
 %
 % Date Created: 21 aug 2017
-% Last Update: 20 oct 2017
+% Last Update: 07 nov 2017
 
 %% Verify if palamedes have been installed and if folder is on the correct path
 palamedes_path_logical = exist('palamedes1_8_2','dir');
@@ -23,6 +23,9 @@ if ~palamedes_path_logical
 else
    addpath('palamedes1_8_2/Palamedes');
 end
+
+%% Acquisition TR
+params.TR = 2;
 
 %% Stimulus Characteristics
 % Text font
@@ -142,7 +145,7 @@ if isequal(setup.stage,'training')
     conditions = {'control'};
     
 elseif isequal(setup.stage,'experiment')
-    conditions = {'experiment','rest', 'control','rest','experiment', 'control'};
+    conditions = {'experiment','rest','control','rest','experiment','rest','control','rest','experiment','rest','control','rest','experiment','rest','control'};
     
 end
 

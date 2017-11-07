@@ -4,7 +4,7 @@
 % Author: Raymundo Machado de Azevedo Neto
 %         Paulo Rodrigo Bazan
 % Date Created: 22 aug 2017
-% Last Update: 20 oct 2017
+% Last Update: 07 nov 2017
 
 clear all
 close all
@@ -67,7 +67,7 @@ try
     %%  Instruction Screen
     Screen('TextSize', params.ptb.w.id, 36);
     Screen('TextFont',params.ptb.w.id, 'Arial');
-    Text='O experimento vai comeÃ§ar em instantes.\n Aguarde.';
+    Text='O experimento vai comeÃÂ§ar em instantes.\n Aguarde.';
     DrawFormattedText(params.ptb.w.id, Text, 'center', 'center',0);
     Screen('Flip',params.ptb.w.id);
     
@@ -428,14 +428,17 @@ try
             
         end
         
-    end
+    end    
     
-    % Press ESC to abort the experiment
-    %         if keyIsDown
-    %             if keyCode(escapeKey)
-    %                 break;
-    %             end
-    %         end
+    % Show rest screen at the end
+    % Start experiment with a fixation of 5 s
+    [~,~,~] = executeMISTtrial('+',0.1,[],params);    
+    
+    % Syncronize last volume acquisition with program
+    end_flag=0;
+    while end_flag == 0;
+        [~, ~,~,end_flag]=KbWait2(params.ptb.device.trigger,0,params.TR+0.005);
+    end
     
     % Give information about experiment time
     tempo_final=GetSecs;

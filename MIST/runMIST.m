@@ -403,6 +403,7 @@ try
         
         % Check how long was the block
         block_length(b) = timer_block;
+        disp([params.blocks{b} ' block length = ' num2str(timer_block)])
         
         % Check block timing
         check_block_time2 = GetSecs - check_block_time;

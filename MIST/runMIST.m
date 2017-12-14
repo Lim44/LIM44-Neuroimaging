@@ -4,7 +4,7 @@
 % Author: Raymundo Machado de Azevedo Neto
 %         Paulo Rodrigo Bazan
 % Date Created: 22 aug 2017
-% Last Update: 07 nov 2017
+% Last Update: 14 dec 2017
 
 clear all
 close all
@@ -107,7 +107,7 @@ try
             
             % If it is at the first trial, pctg_correct_flag starts at
             % params.pctg_corret, otherwise it is set to pctg_correct
-            if count_operation(1) == 1
+            if count_operation(1) == 1 || ~exist('pctg_correct','var') 
                 pctg_correct_flag = params.pctg_corect;
             else
                 pctg_correct_flag = pctg_correct;

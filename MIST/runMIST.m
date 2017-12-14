@@ -432,7 +432,7 @@ try
     
     % Show rest screen at the end
     % Start experiment with a fixation of 5 s
-    [~,~,~] = executeMISTtrial('+',0.1,[],params);    
+    [~,~,~] = executeMISTtrial('+',5,[],params);    
     
     % Syncronize last volume acquisition with program
     end_flag=0;

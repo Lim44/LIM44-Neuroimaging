@@ -290,7 +290,7 @@ try
             
             % Run the Inter-Trial Interval if it is not rest and if
             % block is not over
-            if ~isequal(params.blocks{b},'rest') && ~(time_block >= timer_block)
+            if ~isequal(params.blocks{b},'rest') && (time_block >= timer_block)
                 before_ITI = GetSecs;
                 [~,~,~] = executeMISTtrial('+',ITI,pctg_correct_flag,params);
                 ITI_timing = GetSecs - before_ITI;

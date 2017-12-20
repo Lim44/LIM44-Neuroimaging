@@ -4,7 +4,7 @@
 % Author: Raymundo Machado de Azevedo Neto
 %         Paulo Rodrigo Bazan
 % Date Created: 22 aug 2017
-% Last Update: 14 dec 2017
+% Last Update: 20 dec 2017
 
 clear all
 close all
@@ -67,7 +67,7 @@ try
     %%  Instruction Screen
     Screen('TextSize', params.ptb.w.id, 36);
     Screen('TextFont',params.ptb.w.id, 'Arial');
-    Text='O experimento vai comeÃÂ§ar em instantes.\n Aguarde.';
+    Text='O experimento vai comeÃÂÃÂ§ar em instantes.\n Aguarde.';
     DrawFormattedText(params.ptb.w.id, Text, 'center', 'center',0);
     Screen('Flip',params.ptb.w.id);
     
@@ -107,7 +107,7 @@ try
             
             % If it is at the first trial, pctg_correct_flag starts at
             % params.pctg_corret, otherwise it is set to pctg_correct
-            if count_operation(1) == 1 || ~exist('pctg_correct','var') 
+            if count_operation(1) == 1 || ~exist('pctg_correct','var')
                 pctg_correct_flag = params.pctg_corect;
             else
                 pctg_correct_flag = pctg_correct;
@@ -150,7 +150,7 @@ try
         
         % Loop through all trials whithin a block
         while time_block >= timer_block % Should think of better names for these two variables
-            
+                        
             % Restart ITI
             ITI = params.ITI;
             
@@ -250,7 +250,8 @@ try
                 if count_block(1) == 1 % if it is the first block
                     trial_per_block(count_block(1),1) = count_operation(1);
                 else
-                    trial_per_block(count_block(1),1) = count_operation(1) - trial_per_block(count_block(1) - 1,1);
+%                     trial_per_block(count_block(1),1) = count_operation(1) - trial_per_block(count_block(1) - 1,1);
+                    trial_per_block(count_block(1),1) = count_operation(1) - sum(trial_per_block(1:count_block(1) - 1,1));
                 end
                 
             elseif isequal(params.blocks{b},'control')
@@ -258,7 +259,8 @@ try
                 if count_block(2) == 1 % if it is the first block
                     trial_per_block(count_block(2),2) = count_operation(2);
                 else
-                    trial_per_block(count_block(2),2) = count_operation(2) - trial_per_block(count_block(2) - 1,2);
+%                     trial_per_block(count_block(2),2) = count_operation(2) - trial_per_block(count_block(2) - 1,2);
+                    trial_per_block(count_block(2),2) = count_operation(2) - sum(trial_per_block(1:count_block(2) - 1,2));
                 end
                 
             end
@@ -431,8 +433,7 @@ try
         
     end    
     
-    % Show rest screen at the end
-    % Start experiment with a fixation of 5 s
+    % Show rest screen at the end    
     [~,~,~] = executeMISTtrial('+',5,[],params);    
     
     % Syncronize last volume acquisition with program

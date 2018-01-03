@@ -83,12 +83,12 @@ HideCursor;
 [tmp_device_number, ~, ~] = GetKeyboardIndices;
 
 % This chunck of code reverts the numbers for a stupid button box
-if length(tmp_device_number) == 1
+if length(tmp_device_number) == 1 || length(tmp_device_number) == 3
     
     ptb.device.left = KbName('1!');
     ptb.device.right = KbName('3#');
     
-else
+elseif length(tmp_device_number) == 2
     
     ptb.device.left = KbName('3#');
     ptb.device.right = KbName('1!');

@@ -3,7 +3,7 @@
 % Author: Raymundo Machado de Azevedo Neto
 %
 % Date Created: 13 oct 2017
-% Last Update: --
+% Last Update: 17 jan 2018
 
 clear all
 close all
@@ -24,7 +24,7 @@ try
     %%  Instruction Screen
     Screen('TextSize', params.ptb.w.id, 36);
     Screen('TextFont',params.ptb.w.id, 'Arial');
-    Text='O experimento vai come�ar em instantes.\n Aguarde.';
+    Text='O experimento vai comeÁar em instantes.\n Aguarde.';
     DrawFormattedText(params.ptb.w.id, Text, 'center', 'center',0);
     Screen('Flip',params.ptb.w.id);
     
@@ -167,8 +167,12 @@ try
                     % Response result
                     if isequal(participant_response,colour)
                         response = 1;
+                        response_text = 'CORRETO!';
+                        fprintf('O estÌmulo tinha cor %s, o participant respondeu %s: %s\n',colour,participant_response,response_text) 
                     else
                         response = 0;
+                        response_text = 'ERRADO!';
+                        fprintf('O estÌmulo tinha cor %s, o participant respondeu %s: %s\n',colour,participant_response,response_text) 
                     end
                     
                     % Change flag to record only one response
@@ -177,7 +181,7 @@ try
                     % Response time
                     response_time = timeSecs - vbl;
                     
-                end
+                end                
                 
                 % Update timer_stimulus
                 timer_stimulus = GetSecs - vbl;
@@ -318,14 +322,18 @@ try
         end
         
     end
-    
-    % Wait 5 seconds before the end of the experiment
+        
     % Draw fixation cross
     Screen('FillRect', params.ptb.w.id, params.ptb.color.black, params.fixation_cross);
     
     % Flip screen and get timing
     vbl = Screen('Flip',params.ptb.w.id);
-    WaitSecs(5);
+    
+    % Syncronize last volume acquisition with program
+    end_flag=0;
+    while end_flag == 0;
+        [~, ~,~,end_flag]=KbWait2(params.ptb.device.id,0,params.TR+0.005);
+    end
     
     % Give information about experiment time
     tempo_final=GetSecs;

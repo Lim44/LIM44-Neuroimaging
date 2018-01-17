@@ -10,7 +10,10 @@ function params = getExpParamsStroop(ptb,setup)
 % Authors: Raymundo Machado de Azevedo Neto
 %
 % Date Created: 13 oct 2017
-% Last Update: --
+% Last Update: 17 jan 2018
+
+%% TR (s)
+params.TR = 2;
 
 %% Stimulus Characteristics
 % Text font
@@ -63,12 +66,20 @@ params.incongruent_order = all_incongruent_stimuli(draw_incongruent_order);
 params.neutral_order = all_neutral_stimuli(draw_neutral_order);
 
 % Conditions and block order
-% conditions = {'congruent','neutral','incongruent','congruent','neutral','incongruent',...
-%     'congruent','neutral','incongruent','congruent','neutral','incongruent'...
-%     ,'congruent','neutral','incongruent','congruent','neutral','incongruent'};
-conditions = {'congruent','neutral','incongruent','congruent','neutral','incongruent'};
+conditions_exp = {'congruent','neutral','incongruent','congruent','neutral','incongruent',...
+    'congruent','neutral','incongruent','congruent','neutral','incongruent'...
+    ,'congruent','neutral','incongruent','congruent','neutral','incongruent'};
+conditions_training = {'congruent','neutral','incongruent'};
 
-params.blocks = conditions;
+if isequal(setup.stage,'training')
+    
+    params.blocks = conditions_training;
+    
+else
+    
+    params.blocks = conditions_exp;
+    
+end
 
 % Stimulus length (s) and ISI (s)
 params.stimulus_length = 1;

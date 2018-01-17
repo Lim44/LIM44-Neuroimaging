@@ -4,7 +4,7 @@
 % Author: Raymundo Machado de Azevedo Neto
 %         Paulo Rodrigo Bazan
 % Date Created: 22 aug 2017
-% Last Update: 20 dec 2017
+% Last Update: 17 jan 2018
 
 clear all
 close all
@@ -67,7 +67,7 @@ try
     %%  Instruction Screen
     Screen('TextSize', params.ptb.w.id, 36);
     Screen('TextFont',params.ptb.w.id, 'Arial');
-    Text='O experimento vai comeÃÂÃÂ§ar em instantes.\n Aguarde.';
+    Text='O experimento comeÁar· em instantes.\n Aguarde.';
     DrawFormattedText(params.ptb.w.id, Text, 'center', 'center',0);
     Screen('Flip',params.ptb.w.id);
     
@@ -136,7 +136,7 @@ try
             end
             
             
-        else
+        elseif isequal(params.blocks{b},'rest')
             time_out = params.time_block.rest;
             pctg_correct_flag = [];
             col_exp = 3; % this variable helps alocate values on correct column
@@ -194,7 +194,8 @@ try
                 % Up Down Staircase
                 % Update time_out on experiment blocks
                 if isequal(params.blocks{b},'experiment')
-                    UD = PAL_AMUD_updateUD(UD, response(count_operation(col_exp), col_exp));                
+                    UD = PAL_AMUD_updateUD(UD, response(count_operation(col_exp), col_exp));
+                    time_out = UD.xCurrent;
                 elseif isequal(params.blocks{b},'control') || isequal(params.blocks{b},'rest')
                     time_out = UD.xCurrent;                                
                 end
@@ -305,7 +306,7 @@ try
                 if count_operation(2) > params.min_trials_training
                 
                     % Calculate percentage correct on the last 15 trials
-                    pctg_correct_training = sum(response(:,2))/length(response(:,2));
+                    pctg_correct_training = sum(response(end-19:end,2))/length(response(end-19:end,2));
                     
                     % If percentage correct is >= termination criterium,
                     % abort = 1
@@ -400,7 +401,8 @@ try
             end
             
             % Update block timer
-            timer_block = GetSecs - block_start;
+            timer_block = GetSecs - block_start;           
+            
         end
         
         % Check how long was the block

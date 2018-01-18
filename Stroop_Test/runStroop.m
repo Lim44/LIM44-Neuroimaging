@@ -3,7 +3,7 @@
 % Author: Raymundo Machado de Azevedo Neto
 %
 % Date Created: 13 oct 2017
-% Last Update: 17 jan 2018
+% Last Update: 18 jan 2018
 
 clear all
 close all
@@ -150,7 +150,7 @@ try
             while timer_stimulus < params.stimulus_length
                 
                 % Check for any key presses
-                [keyIsDown, timeSecs, keyCode] = KbCheck(-1);
+                [keyIsDown, timeSecs, keyCode] = KbCheck(params.ptb.device.id);
                 
                 % Check response
                 if flag_key == 0 && keyIsDown
